@@ -1,14 +1,13 @@
 from constantdict import constantdict
 
+cd = constantdict({1: 2})
 
-cd = constantdict({1:2})
-
-assert cd == {1:2}
+assert cd == {1: 2}
 
 print(hash(cd), cd)
 
 
-assert constantdict.fromkeys([1,2,3]) == {1:None, 2:None, 3:None}
+assert constantdict.fromkeys([1, 2, 3]) == {1: None, 2: None, 3: None}
 
 
 try:
