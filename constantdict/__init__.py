@@ -41,6 +41,7 @@ V = TypeVar("V")
 
 
 def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
+    """Raise an AttributeError when trying to modify the object."""
     raise AttributeError("object is immutable")
 
 
