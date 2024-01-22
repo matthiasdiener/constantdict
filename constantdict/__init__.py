@@ -34,22 +34,26 @@ except ModuleNotFoundError:  # pragma: no cover
 __version__ = importlib_metadata.version(__package__ or __name__)
 
 
-from typing import Any
+from typing import Any, Mapping, Type, TypeVar
+
+K = TypeVar("K")
+V = TypeVar("V")
 
 
-def _del_attr(*args: Any, **kwargs: Any) -> None:
+def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
     raise AttributeError("object is immutable")
 
 
-class constantdict(dict):  # noqa: N801
+class constantdict(dict[K, V]):  # noqa: N801
     @classmethod
-    def fromkeys(cls, *args, **kwargs) -> constantdict:
+    def fromkeys(_cls: Type[Mapping[K, V]], *args: Any,  # type: ignore[override]
+                 **kwargs: Any) -> Mapping[K, V]:
         # dict.fromkeys calls __setitem__, hence need to convert
-        return cls(dict.fromkeys(*args, **kwargs))
+        return _cls(dict.fromkeys(*args, **kwargs))
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> int:  # type: ignore[override]
         try:
-            return self._hash
+            return self._hash  # type: ignore[has-type,no-any-return]
         except AttributeError:
             h = 0
             for key, value in self.items():
@@ -60,7 +64,7 @@ class constantdict(dict):  # noqa: N801
     __delitem__ = _del_attr
     __setitem__ = _del_attr
     clear = _del_attr
-    popitem = _del_attr
-    pop = _del_attr
-    setdefault = _del_attr
+    popitem = _del_attr  # type: ignore[assignment]
+    pop = _del_attr  # type: ignore[assignment]
+    setdefault = _del_attr  # type: ignore[assignment]
     update = _del_attr
