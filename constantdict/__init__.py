@@ -58,7 +58,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
         return cls(dict.fromkeys(*args, **kwargs))
 
     def __hash__(self) -> int:  # type: ignore[override]
-        """Return hash of the dictionary."""
+        """Return the hash of the dictionary."""
         try:
             return self._hash  # type: ignore[has-type,no-any-return]
         except AttributeError:
@@ -67,6 +67,15 @@ class constantdict(Dict[K, V]):  # noqa: N801
                 h ^= hash((key, value))
             self._hash = h
             return h
+
+    def __reduce__(self) -> str | tuple[Any, ...]:
+        """Return pickling information for this constantdict."""
+        # Do not store the cached hash value when pickling
+        # as the value might change across Python invocations.
+
+        # Also, this circumvents pickle's internal calls to __setitem__,
+        # which would raise an exception in constantdict.
+        return (self.__class__, (dict(self),))
 
     __delitem__ = _del_attr
     __setitem__ = _del_attr
