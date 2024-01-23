@@ -3,13 +3,14 @@ from timeit import timeit
 from frozendict import frozendict
 from immutabledict import immutabledict
 from immutables import Map
+from pyrsistent import pmap
 
 from constantdict import constantdict
 
 basedict = {1: 2}
-basedict = dict.fromkeys(range(1000))
+# basedict = dict.fromkeys(range(1000))
 
-for dict_impl in (dict, constantdict, immutabledict, Map, frozendict):
+for dict_impl in (dict, constantdict, immutabledict, Map, frozendict, pmap):
     print(dict_impl.__name__)
 
     print("  creation", timeit(f"{dict_impl.__name__}({basedict})", number=10000, globals=globals()))
