@@ -36,7 +36,7 @@ except ModuleNotFoundError:  # pragma: no cover
 __version__ = importlib_metadata.version(__package__ or __name__)
 
 
-from typing import Any, Type, TypeVar
+from typing import Any, Type, TypeVar, Dict
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -47,7 +47,7 @@ def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
     raise AttributeError("object is immutable")
 
 
-class constantdict(dict[K, V]):  # noqa: N801
+class constantdict(Dict[K, V]):  # noqa: N801
     """An immutable dictionary."""
 
     @classmethod
