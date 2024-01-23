@@ -8,7 +8,7 @@ from pyrsistent import pmap
 from constantdict import constantdict
 
 basedict = {1: None}
-basedict = dict.fromkeys(range(1000))
+# basedict = dict.fromkeys(range(1000))
 
 for dict_impl in (dict, constantdict, immutabledict, Map, frozendict, pmap):
 
