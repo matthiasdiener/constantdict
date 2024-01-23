@@ -32,6 +32,7 @@ jobs:
     - name: Run mypy
       run: |
         python -m pip install mypy pytest importlib_metadata
+        python -m pip install frozendict immutables immutabledict pyrsistent
         python -m pip install -e .
         ./run-mypy.sh
 
@@ -45,6 +46,7 @@ jobs:
     - name: Run Pylint
       run: |
         python -m pip install pylint PyYAML pytest
+        python -m pip install frozendict immutables immutabledict pyrsistent
         python -m pip install -e .
         ./run-pylint.sh
 
@@ -96,5 +98,7 @@ jobs:
     - name: Run examples
       run: |
         python -m pip install -e .
+        python -m pip install importlib_metadata
+        python -m pip install frozendict immutables immutabledict pyrsistent
         cd examples
         for f in *.py; do echo Running $f; python $f; done
