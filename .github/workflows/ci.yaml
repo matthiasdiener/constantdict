@@ -98,7 +98,6 @@ jobs:
     - name: Run examples
       run: |
         python -m pip install -e .
-        python -m pip install importlib_metadata
         python -m pip install frozendict immutables immutabledict pyrsistent
         cd examples
         for f in *.py; do echo Running $f; python $f; done
