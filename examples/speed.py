@@ -11,25 +11,28 @@ basedict = {1: None}
 basedict = dict.fromkeys(range(1000))
 
 for dict_impl in (dict, constantdict, immutabledict, Map, frozendict, pmap):
-    print(dict_impl.__name__)
 
-    print("  creation", timeit(f"{dict_impl.__name__}({basedict})",
+    name = dict_impl.__name__  # type: ignore[attr-defined]
+
+    print(name)
+
+    print("  creation", timeit(f"{name}({basedict})",
                                number=10000, globals=globals()))
 
     try:
-        print("  fromkeys", timeit(f"{dict_impl.__name__}.fromkeys(range(1000))",
+        print("  fromkeys", timeit(f"{name}.fromkeys(range(1000))",
                                    number=10000, globals=globals()))
     except AttributeError:
         print("  fromkeys MISSING")
 
     try:
-        print("  hash", timeit(f"hash({dict_impl.__name__}({basedict}))",
+        print("  hash", timeit(f"hash({name}({basedict}))",
                                number=10000, globals=globals()))
     except (AttributeError, TypeError):
         print("  hash MISSING")
 
-    print("  elem_access", timeit(f"{dict_impl.__name__}({basedict})[1]",
+    print("  elem_access", timeit(f"{name}({basedict})[1]",
                                   number=10000, globals=globals()))
 
-    print("  list(keys)", timeit(f"list({dict_impl.__name__}({basedict}).keys())",
+    print("  list(keys)", timeit(f"list({name}({basedict}).keys())",
                                  number=10000, globals=globals()))
