@@ -36,7 +36,7 @@ except ModuleNotFoundError:  # pragma: no cover
 __version__ = importlib_metadata.version(__package__ or __name__)
 
 
-from typing import Any, Type, TypeVar, Dict
+from typing import Any, Dict, Type, TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")
