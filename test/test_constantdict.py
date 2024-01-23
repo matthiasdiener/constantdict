@@ -1,3 +1,5 @@
+from typing import Any
+
 from constantdict import constantdict
 
 
@@ -8,6 +10,6 @@ def test_basic() -> None:
 
 
 def test_fromkeys() -> None:
-    cd = constantdict.fromkeys(["a", "b", "c"])
+    cd: constantdict[Any, Any] = constantdict.fromkeys(["a", "b", "c"])
     assert cd == {"a": None, "b": None, "c": None}
     assert cd == dict.fromkeys(["a", "b", "c"])

@@ -1,7 +1,9 @@
+"""Immutable dictionary implementation."""
+
 from __future__ import annotations
 
 __copyright__ = """
-Copyright (C) 2023 University of Illinois Board of Trustees
+Copyright (C) 2024 University of Illinois Board of Trustees
 """
 
 
@@ -34,7 +36,7 @@ except ModuleNotFoundError:  # pragma: no cover
 __version__ = importlib_metadata.version(__package__ or __name__)
 
 
-from typing import Any, Mapping, Type, TypeVar
+from typing import Any, Type, TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -46,13 +48,17 @@ def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
 
 
 class constantdict(dict[K, V]):  # noqa: N801
+    """An immutable dictionary."""
+
     @classmethod
-    def fromkeys(_cls: Type[Mapping[K, V]], *args: Any,  # type: ignore[override]
-                 **kwargs: Any) -> Mapping[K, V]:
+    def fromkeys(cls: Type[dict[K, V]], *args: Any,
+                 **kwargs: Any) -> Any:
+        """Create a new dictionary from supplied keys and values."""
         # dict.fromkeys calls __setitem__, hence need to convert
-        return _cls(dict.fromkeys(*args, **kwargs))
+        return cls(dict.fromkeys(*args, **kwargs))
 
     def __hash__(self) -> int:  # type: ignore[override]
+        """Return hash of the dictionary."""
         try:
             return self._hash  # type: ignore[has-type,no-any-return]
         except AttributeError:
