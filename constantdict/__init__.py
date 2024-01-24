@@ -69,6 +69,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
             return h
 
     def __repr__(self) -> str:
+        """Return a string representation of the dictionary."""
         return f"{self.__class__.__name__}({dict(self)!r})"
 
     def __reduce__(self) -> str | tuple[Any, ...]:
