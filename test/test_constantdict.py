@@ -61,7 +61,10 @@ def test_or() -> None:
 
     assert isinstance(cd | {"a": 10}, constantdict)
     assert isinstance(cd | {"c": 17}, constantdict)
-    assert not isinstance({"a": 10} | cd, constantdict)
+
+    import sys
+    if sys.version_info >= (3, 9):
+        assert not isinstance({"a": 10} | cd, constantdict)
 
     assert isinstance(cd | cd, constantdict)
     assert cd | cd == cd
