@@ -1,11 +1,11 @@
 [![PyPI version](https://badge.fury.io/py/constantdict.svg)](https://badge.fury.io/py/constantdict)
 [![Doc Status](https://img.shields.io/github/actions/workflow/status/matthiasdiener/constantdict/doc.yaml?label=docs)](https://matthiasdiener.github.io/constantdict)
-![License](https://img.shields.io/pypi/l/constantdict)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/constantdict)
+[![License](https://img.shields.io/pypi/l/constantdict)](https://github.com/matthiasdiener/constantdict/blob/main/LICENSE)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/constantdict)](https://badge.fury.io/py/constantdict)
 
 # constantdict
 
-An immutable dictionary class for Python, implemented as a thin layer around `dict`. It is often [faster than other immutable dictionary implementations](https://matthiasdiener.github.io/constantdict/speed.html)
+An immutable dictionary class for Python, implemented as a thin layer around `dict`. It is often [faster than other immutable dictionary implementations](https://matthiasdiener.github.io/constantdict/speed.html).
 
 ## Usage
 
