@@ -19,7 +19,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: 3.12
     - name: Build HTML
@@ -29,7 +29,7 @@ jobs:
         cd doc
         make html
     - name: Upload artifacts
-      uses: actions/upload-pages-artifact@v2
+      uses: actions/upload-pages-artifact@v3
       with:
         path: doc/_build/html/
   deploy-docs:
@@ -45,4 +45,4 @@ jobs:
       steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2 # or the latest "vX.X.X" version tag for this action
+        uses: actions/deploy-pages@v3 # or the latest "vX.X.X" version tag for this action
