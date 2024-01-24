@@ -53,12 +53,12 @@ class constantdict(Dict[K, V]):  # noqa: N801
     @classmethod
     def fromkeys(cls: Type[dict[K, V]], *args: Any,
                  **kwargs: Any) -> Any:
-        """Create a new dictionary from supplied keys and values."""
+        """Create a new :class:`constantdict` from supplied keys and values."""
         # dict.fromkeys calls __setitem__, hence need to convert
         return cls(dict.fromkeys(*args, **kwargs))
 
     def __hash__(self) -> int:  # type: ignore[override]
-        """Return the hash of the dictionary."""
+        """Return the hash of this :class:`constantdict`."""
         try:
             return self._hash  # type: ignore[has-type,no-any-return]
         except AttributeError:
@@ -69,17 +69,25 @@ class constantdict(Dict[K, V]):  # noqa: N801
             return h
 
     def __repr__(self) -> str:
-        """Return a string representation of the dictionary."""
+        """Return a string representation of this :class:`constantdict`."""
         return f"{self.__class__.__name__}({dict(self)!r})"
 
     def __reduce__(self) -> str | tuple[Any, ...]:
-        """Return pickling information for this constantdict."""
+        """Return pickling information for this :class:`constantdict`."""
         # Do not store the cached hash value when pickling
         # as the value might change across Python invocations.
 
         # Also, this circumvents pickle's internal calls to __setitem__,
         # which would raise an exception in constantdict.
         return (self.__class__, (dict(self),))
+
+    def __or__(self, other: Any) -> constantdict[K, V]:  # type: ignore[override]
+        """Return the union of this :class:`constantdict` and *other*."""
+        if not isinstance(other, (dict, self.__class__)):
+            return NotImplemented
+        return self.update(other)
+
+    # {{{ methods that return a modified copy of the dictionary
 
     def set(self, key: K, val: Any) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with the item at *key* set to *val*."""
@@ -94,13 +102,16 @@ class constantdict(Dict[K, V]):  # noqa: N801
         return self.__class__(new)
 
     def update(self,  # type: ignore[override]
-               _dict: Dict[K, V]) -> constantdict[K, V]:
-        """Return a new :class:`constantdict` with updated items from *_dict*."""
+               other: Dict[K, V]) -> constantdict[K, V]:
+        """Return a new :class:`constantdict` with updated items from *other*."""
         new = dict(self)
-        new.update(_dict)
+        new.update(other)
         return self.__class__(new)
 
+    # }}}
+
     __delitem__ = _del_attr
+    __ior__ = _del_attr  # type: ignore[assignment]
     __setitem__ = _del_attr
     clear = _del_attr
     popitem = _del_attr  # type: ignore[assignment]
