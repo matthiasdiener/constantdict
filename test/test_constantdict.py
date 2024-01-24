@@ -85,7 +85,7 @@ def test_copy() -> None:
 
 
 def test_hash() -> None:
-    cd: constantdict[str, int] = constantdict({1: 2})
+    cd: constantdict[int, int] = constantdict({1: 2})
 
     assert hash(cd)
 
@@ -117,20 +117,20 @@ def test_ior() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     with pytest.raises(AttributeError):
-        cd |= {"a": 10}
+        cd |= {"a": 10}  # type: ignore[has-type]
 
 
 def test_popitem() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     with pytest.raises(AttributeError):
-        cd.popitem()
+        cd.popitem()  # type: ignore[has-type]
 
 
 def test_pop() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     with pytest.raises(AttributeError):
-        cd.pop("a")
+        cd.pop("a")  # type: ignore[has-type]
 
 # }}}
