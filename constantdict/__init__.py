@@ -68,6 +68,10 @@ class constantdict(Dict[K, V]):  # noqa: N801
             self._hash = h
             return h
 
+    def __repr__(self) -> str:
+        """Return a string representation of the dictionary."""
+        return f"{self.__class__.__name__}({dict(self)!r})"
+
     def __reduce__(self) -> str | tuple[Any, ...]:
         """Return pickling information for this constantdict."""
         # Do not store the cached hash value when pickling
