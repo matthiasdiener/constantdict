@@ -77,10 +77,27 @@ class constantdict(Dict[K, V]):  # noqa: N801
         # which would raise an exception in constantdict.
         return (self.__class__, (dict(self),))
 
+    def set(self, key: K, val: Any) -> constantdict[K, V]:
+        """Return a new :class:`constantdict` with the item at *key* set to *val*."""
+        new = dict(self)
+        new[key] = val
+        return self.__class__(new)
+
+    def delete(self, key: K) -> constantdict[K, V]:
+        """Return a new :class:`constantdict` without the item at the given key."""
+        new = dict(self)
+        del new[key]
+        return self.__class__(new)
+
+    def update(self, _dict: Dict[K, V]) -> constantdict[K, V]:
+        """Return a new :class:`constantdict` with updated items from *_dict*."""
+        new = dict(self)
+        new.update(_dict)
+        return self.__class__(new)
+
     __delitem__ = _del_attr
     __setitem__ = _del_attr
     clear = _del_attr
     popitem = _del_attr  # type: ignore[assignment]
     pop = _del_attr  # type: ignore[assignment]
     setdefault = _del_attr  # type: ignore[assignment]
-    update = _del_attr
