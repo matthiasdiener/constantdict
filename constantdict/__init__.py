@@ -87,6 +87,10 @@ class constantdict(Dict[K, V]):  # noqa: N801
             return NotImplemented
         return self.update(other)
 
+    def copy(self) -> dict[K, V]:
+        """Return a shallow copy of this :class:`constantdict`."""
+        return self.__class__(dict(self))
+
     # {{{ methods that return a modified copy of the dictionary
 
     def set(self, key: K, val: Any) -> constantdict[K, V]:
