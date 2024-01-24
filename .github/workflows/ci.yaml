@@ -80,7 +80,7 @@ jobs:
         python -m pip install pytest pytest-cov
         python -m pip install -e .
         cd test
-        python -m pytest --cov=constantdict --durations=5 --tb=native -rxsw --cov-fail-under=0 --cov-report=term-missing -v .
+        python -m pytest --cov=constantdict --durations=5 --tb=native -rxsw --cov-fail-under=100 --cov-report=term-missing -v .
 
   examples:
     runs-on: ubuntu-latest
