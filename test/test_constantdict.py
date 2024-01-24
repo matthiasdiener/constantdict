@@ -11,6 +11,11 @@ def test_basic() -> None:
     assert cd == d
 
 
+def test_repr() -> None:
+    cd = constantdict({"a": 1, "b": 2})
+    assert repr(cd) == "constantdict({'a': 1, 'b': 2})"
+
+
 def test_fromkeys() -> None:
     cd: constantdict[Any, Any] = constantdict.fromkeys(["a", "b", "c"])
     assert cd == {"a": None, "b": None, "c": None}
