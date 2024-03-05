@@ -136,4 +136,17 @@ def test_pop() -> None:
     with pytest.raises(AttributeError):
         cd.pop("a")  # type: ignore[has-type]
 
+
+def test_discard() -> None:
+    cd: constantdict[str, int] = constantdict(a=1, b=2)
+
+    # Key present
+    assert cd.discard("a") == constantdict(b=2) == {"b": 2}
+    assert hash(cd.discard("a")) != hash(cd)
+
+    # Key not present
+    assert cd.discard("c") == cd == {"a": 1, "b": 2}
+    assert hash(cd.discard("c")) == hash(cd)
+    assert cd.discard("c") is cd
+
 # }}}

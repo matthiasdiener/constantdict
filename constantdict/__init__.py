@@ -112,6 +112,16 @@ class constantdict(Dict[K, V]):  # noqa: N801
         new.update(other)
         return self.__class__(new)
 
+    def discard(self, key: K) -> constantdict[K, V]:
+        """Return a new :class:`constantdict` without the item at the given key.
+        Return a reference to itself if element is not present."""
+        # Based on pyrsistent.PMap API
+        if key not in self:
+            return self
+        new = dict(self)
+        new.pop(key)
+        return self.__class__(new)
+
     # }}}
 
     # {{{ deleted methods
