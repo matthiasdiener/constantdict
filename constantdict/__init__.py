@@ -62,7 +62,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
         try:
             return self._hash
         except AttributeError:
-            self._hash: int = hash(tuple(self.items()))
+            self._hash: int = hash(frozenset(self.items()))
             return self._hash
 
     def __repr__(self) -> str:
