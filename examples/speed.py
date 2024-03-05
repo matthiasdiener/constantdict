@@ -16,23 +16,30 @@ for dict_impl in (dict, constantdict, immutabledict, Map, frozendict, pmap):
 
     print(name)
 
-    print("  creation", timeit(f"{name}({basedict})",
-                               number=10000, globals=globals()))
+    print("  creation\t", timeit(f"{name}({basedict})",
+                                 number=10000, globals=globals()))
 
     try:
-        print("  fromkeys", timeit(f"{name}.fromkeys(range(1000))",
-                                   number=10000, globals=globals()))
+        print("  fromkeys\t", timeit(f"{name}.fromkeys(range(1000))",
+                                     number=10000, globals=globals()))
     except AttributeError:
         print("  fromkeys MISSING")
 
     try:
-        print("  hash", timeit(f"hash({name}({basedict}))",
-                               number=10000, globals=globals()))
+        print("  hash\t\t", timeit(f"hash({name}({basedict}))",
+                                   number=10000, globals=globals()))
     except (AttributeError, TypeError):
         print("  hash MISSING")
 
-    print("  elem_access", timeit(f"{name}({basedict})[1]",
-                                  number=10000, globals=globals()))
+    try:
+        print("  hash2\t\t", timeit("for i in range(1000): hash(x)",
+                                    setup=f"x={name}({basedict})",
+                                    number=10000, globals=globals()))
+    except (AttributeError, TypeError):
+        print("  hash2 MISSING")
 
-    print("  list(keys)", timeit(f"list({name}({basedict}).keys())",
-                                 number=10000, globals=globals()))
+    print("  elem_access\t", timeit(f"{name}({basedict})[1]",
+                                    number=10000, globals=globals()))
+
+    print("  list(keys)\t", timeit(f"list({name}({basedict}).keys())",
+                                   number=10000, globals=globals()))

@@ -5,7 +5,7 @@
 
 # constantdict
 
-An immutable dictionary class for Python, implemented as a thin layer around `dict`. It is often [faster than other immutable dictionary implementations](https://matthiasdiener.github.io/constantdict/speed.html).
+An immutable dictionary class for Python, implemented as a thin layer around Python's builtin `dict` class. It is often [faster than other immutable dictionary implementations](https://matthiasdiener.github.io/constantdict/speed.html).
 
 ## Usage
 
@@ -34,7 +34,8 @@ except AttributeError:
     pass
 ```
 
-Please also see the [documentation](https://matthiasdiener.github.io/constantdict).
+Please also see the [documentation](https://matthiasdiener.github.io/constantdict),
+as well as the examples in the `examples/` directory.
 
 
 ## License
