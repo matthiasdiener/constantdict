@@ -105,6 +105,8 @@ class constantdict(Dict[K, V]):  # noqa: N801
         del new[key]
         return self.__class__(new)
 
+    remove = delete
+
     def update(self,  # type: ignore[override]
                other: Dict[K, V]) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*."""
