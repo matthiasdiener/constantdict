@@ -69,7 +69,9 @@ def test_or() -> None:
 
     import sys
     if sys.version_info >= (3, 9):
+        # | operator for dict was introduced in Python 3.9
         assert not isinstance({"a": 10} | cd, constantdict)
+        assert isinstance({"a": 10} | cd, dict)
 
     assert isinstance(cd | cd, constantdict)
     assert cd | cd == cd
