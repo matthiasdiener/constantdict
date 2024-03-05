@@ -111,8 +111,10 @@ def test_hash() -> None:
     cd2 = constantdict({1: 2, 3: 3})
     cd3 = constantdict({2: 2, 3: 4})
 
-    assert cd1 != cd2 != cd3
-    assert hash(cd1) != hash(cd2) != hash(cd3)
+    assert cd1 != cd2 and cd1 != cd3 and cd2 != cd3
+    assert (hash(cd1) != hash(cd2)
+            and hash(cd1) != hash(cd3)
+            and hash(cd2) != hash(cd3))
 
 
 def test_discard() -> None:
