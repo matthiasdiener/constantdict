@@ -54,19 +54,16 @@ class constantdict(Dict[K, V]):  # noqa: N801
     def fromkeys(cls: Type[dict[K, V]], *args: Any,
                  **kwargs: Any) -> Any:
         """Create a new :class:`constantdict` from supplied keys and values."""
-        # dict.fromkeys calls __setitem__, hence need to convert
+        # dict.fromkeys calls __setitem__, hence need to convert from a 'dict'
         return cls(dict.fromkeys(*args, **kwargs))
 
     def __hash__(self) -> int:  # type: ignore[override]
         """Return the hash of this :class:`constantdict`."""
         try:
-            return self._hash  # type: ignore[has-type,no-any-return]
+            return self._hash
         except AttributeError:
-            h = 0
-            for key, value in self.items():
-                h ^= hash((key, value))
-            self._hash = h
-            return h
+            self._hash: int = hash(tuple(self.items()))
+            return self._hash
 
     def __repr__(self) -> str:
         """Return a string representation of this :class:`constantdict`."""
