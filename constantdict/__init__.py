@@ -93,7 +93,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
     # {{{ methods that return a modified copy of the dictionary
 
-    def set(self, key: K, val: Any) -> constantdict[K, V]:
+    def set(self, key: K, val: V) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with the item at *key* set to *val*."""
         new = dict(self)
         new[key] = val
@@ -105,12 +105,25 @@ class constantdict(Dict[K, V]):  # noqa: N801
         del new[key]
         return self.__class__(new)
 
+    remove = delete
+
     def update(self,  # type: ignore[override]
                other: Dict[K, V]) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*."""
         new = dict(self)
         new.update(other)
         return self.__class__(new)
+
+    def discard(self, key: K) -> constantdict[K, V]:
+        """Return a new :class:`constantdict` without the item at the given key.
+
+        Return a reference to itself if the key is not present.
+        """
+        # Based on the pyrsistent.PMap API
+        if key not in self:
+            return self
+
+        return self.delete(key)
 
     # }}}
 

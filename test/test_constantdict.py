@@ -25,19 +25,24 @@ def test_fromkeys() -> None:
     assert cd == dict.fromkeys(["a", "b", "c"])
 
 
-def test_set_delete_update() -> None:
+def test_set_delete_remove_update() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     assert (cd.set("a", 10) == constantdict(a=10, b=2)
             == dict(a=10, b=2))  # noqa: C408
-    assert cd.delete("a") == constantdict(b=2) == dict(b=2)  # noqa: C408
+    assert (cd.remove("a") == cd.delete("a")
+            == constantdict(b=2) == dict(b=2))  # noqa: C408
 
     assert isinstance(cd.set("a", 10), constantdict)
     assert isinstance(cd.delete("a"), constantdict)
+    assert isinstance(cd.remove("a"), constantdict)
     assert isinstance(cd.update({"a": 10}), constantdict)
 
     with pytest.raises(KeyError):
         cd.delete("c")
+
+    with pytest.raises(KeyError):
+        cd.remove("c")
 
     assert cd.update({"a": 3}) == constantdict(a=3, b=2) == {"a": 3, "b": 2}
 
@@ -47,7 +52,7 @@ def test_set_delete_update() -> None:
         == {"a": 1, "b": 2, "c": 17}
     )
 
-    # Make sure 'd' has not changed
+    # Make sure 'cd' has not changed
     assert cd == constantdict(a=1, b=2) == {"a": 1, "b": 2}
     assert isinstance(cd, constantdict)
 
@@ -64,7 +69,9 @@ def test_or() -> None:
 
     import sys
     if sys.version_info >= (3, 9):
+        # | operator for dict was introduced in Python 3.9
         assert not isinstance({"a": 10} | cd, constantdict)
+        assert isinstance({"a": 10} | cd, dict)
 
     assert isinstance(cd | cd, constantdict)
     assert cd | cd == cd
@@ -91,6 +98,19 @@ def test_hash() -> None:
     cd: constantdict[int, int] = constantdict({1: 2})
 
     assert hash(cd)
+
+
+def test_discard() -> None:
+    cd: constantdict[str, int] = constantdict(a=1, b=2)
+
+    # Key present
+    assert cd.discard("a") == constantdict(b=2) == {"b": 2}
+    assert hash(cd.discard("a")) != hash(cd)
+
+    # Key not present
+    assert cd.discard("c") == cd == {"a": 1, "b": 2}
+    assert hash(cd.discard("c")) == hash(cd)
+    assert cd.discard("c") is cd
 
 
 # {{{ test removed methods
