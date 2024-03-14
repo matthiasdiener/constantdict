@@ -1,3 +1,5 @@
+# Simple speed test for various immutable dict implementations
+
 from timeit import timeit
 
 from frozendict import frozendict
@@ -7,8 +9,13 @@ from pyrsistent import pmap
 
 from constantdict import constantdict
 
+# Case 1: 1 item
 basedict = {1: None}
+
+# Case 2: 1000 items
 # basedict = dict.fromkeys(range(1000))
+
+len_dict = len(basedict)
 
 for dict_impl in (dict, constantdict, immutabledict, Map, frozendict, pmap):
 
@@ -20,7 +27,7 @@ for dict_impl in (dict, constantdict, immutabledict, Map, frozendict, pmap):
                                  number=10000, globals=globals()))
 
     try:
-        print("  fromkeys\t", timeit(f"{name}.fromkeys(range(1000))",
+        print("  fromkeys\t", timeit(f"{name}.fromkeys(range(len_dict))",
                                      number=10000, globals=globals()))
     except AttributeError:
         print("  fromkeys MISSING")
