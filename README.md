@@ -38,6 +38,22 @@ Please also see the [documentation](https://matthiasdiener.github.io/constantdic
 as well as the examples in the `examples/` directory.
 
 
+## References
+
+### Other packages
+
+- [immutabledict](https://github.com/corenting/immutabledict)
+- [immutables](https://github.com/MagicStack/immutables)
+- [pyrsistent](https://github.com/tobgu/pyrsistent)
+- [frozendict (old)](https://github.com/slezica/python-frozendict)
+- [frozendict (new)](https://github.com/Marco-Sulla/python-frozendict)
+
+
+### PEPs
+
+- [PEP 416](https://www.python.org/dev/peps/pep-0416/)
+- [PEP 603](https://www.python.org/dev/peps/pep-0603/)
+
 ## License
 
 MIT License.

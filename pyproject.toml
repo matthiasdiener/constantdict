@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "constantdict"
-version = "2024.1"
+version = "2024.2"
 authors = [
   { name="Matthias Diener", email="matthias.diener@gmail.com" },
 ]

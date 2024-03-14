@@ -4,7 +4,9 @@ Speed comparison of dict implementations
 Code
 ****
 
-These results were generated with the following code:
+These results were generated with the following code, found in
+`examples/speed.py <https://github.com/matthiasdiener/constantdict/blob/main/examples/speed.py>`__ in the
+source distribution:
 
 .. literalinclude:: ../examples/speed.py
    :language: python
