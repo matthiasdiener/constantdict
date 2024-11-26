@@ -86,15 +86,13 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
     def copy(self) -> dict[K, V]:
         """Return a shallow copy of this :class:`constantdict`."""
-        return self.__class__(dict(self))
+        return self.__class__(self)
 
     # {{{ methods that return a modified copy of the dictionary
 
     def set(self, key: K, val: V) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with the item at *key* set to *val*."""
-        new = dict(self)
-        new[key] = val
-        return self.__class__(new)
+        return self.__class__({**self, key: val})
 
     def delete(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at the given key."""
@@ -140,15 +138,26 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
     def mutate(self) -> constantmutabledict[K, V]:
         """Return a mutable version of this :class:`constantdict`."""
-        # Based on the immutables.Map API
-        self.__class__ = constantmutabledict  # type: ignore[assignment]
-        return self  # type: ignore[return-value]
+        # Based on the immutables.Map API.
+        # This needs to make a copy since the original dictionary should
+        # not be modified.
+        return constantmutabledict(self)  # type: ignore[return-value]
 
     # }}}
 
 
-class constantmutabledict(Dict[K, V]):  # noqa: N801
+class constantmutabledict(constantdict[K, V]):  # noqa: N801
     """An mutable immutable dictionary."""
+
+    __hash__ = _del_attr
+
+    __delitem__ = dict.__delitem__
+    __ior__ = dict.__ior__
+    __setitem__ = dict.__setitem__
+    clear = dict.clear
+    popitem = dict.popitem
+    pop = dict.pop
+    setdefault = dict.setdefault
 
     def finish(self) -> constantdict[K, V]:
         """Return an immutable version of this :class:`constantmutabledict`."""
