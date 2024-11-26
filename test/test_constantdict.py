@@ -1,7 +1,9 @@
+from typing import Any
+
 import pytest
 
 from constantdict import constantdict
-from typing import Any
+
 
 def test_basic() -> None:
     d = {"a": 1, "b": 2}
