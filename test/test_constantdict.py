@@ -1,7 +1,7 @@
 import pytest
 
 from constantdict import constantdict
-
+from typing import Any
 
 def test_basic() -> None:
     d = {"a": 1, "b": 2}
@@ -175,25 +175,31 @@ def test_pop() -> None:
 
 
 def test_mutation() -> None:
-    cd: constantdict[str, int] = constantdict(a=1, b=2)
-    cd2: constantdict[str, int] = constantdict(a=1, b=2)
+    cd: Any = constantdict(a=1, b=2)
+    cd2 = constantdict(a=1, b=2)
 
-    cd = cd.mutate()
+    with pytest.raises(AttributeError):
+        cd["a"] = 42
 
-    cd["a"] = 42
+    cdm = cd.mutate()
 
-    assert cd == {"a": 42, "b": 2}
+    # Mutation is allowed now
+    cdm["a"] = 42
+
+    assert cdm == {"a": 42, "b": 2}
 
     with pytest.raises(AttributeError):
         # mutate() must not affect other instances of the same class
         cd2["a"] = 43
 
-    cd = cd.finish()
+    cdmm = cdm.finish()
 
-    assert cd == {"a": 42, "b": 2}
+    assert cdmm == {"a": 42, "b": 2}
 
     with pytest.raises(AttributeError):
         cd["a"] = 43
+
+    assert cd == {"a": 1, "b": 2}
 
 
 # }}}
