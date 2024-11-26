@@ -181,10 +181,17 @@ def test_mutation() -> None:
     with pytest.raises(AttributeError):
         cd["a"] = 42
 
+    hash(cd)
+
     cdm = cd.mutate()
 
     # Mutation is allowed now
     cdm["a"] = 42
+
+    with pytest.raises(AttributeError):
+        hash(cdm)
+
+    hash(cd)
 
     assert cdm == {"a": 42, "b": 2}
 
@@ -193,6 +200,8 @@ def test_mutation() -> None:
         cd2["a"] = 43
 
     cdmm = cdm.finish()
+
+    hash(cdmm)
 
     assert cdmm == {"a": 42, "b": 2}
 

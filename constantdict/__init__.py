@@ -141,25 +141,25 @@ class constantdict(Dict[K, V]):  # noqa: N801
         # Based on the immutables.Map API.
         # This needs to make a copy since the original dictionary should
         # not be modified.
-        return constantmutabledict(self)  # type: ignore[return-value]
+        return constantmutabledict(self)
 
     # }}}
 
 
 class constantmutabledict(constantdict[K, V]):  # noqa: N801
-    """An mutable immutable dictionary."""
+    """A mutable immutable dictionary."""
 
-    __hash__ = _del_attr
+    __hash__ = _del_attr  # type: ignore[assignment]
 
-    __delitem__ = dict.__delitem__
+    __delitem__ = dict.__delitem__  # type: ignore[assignment]
     __ior__ = dict.__ior__
-    __setitem__ = dict.__setitem__
+    __setitem__ = dict.__setitem__  # type: ignore[assignment]
     clear = dict.clear
-    popitem = dict.popitem
-    pop = dict.pop
-    setdefault = dict.setdefault
+    popitem = dict.popitem  # type: ignore[assignment]
+    pop = dict.pop  # type: ignore[assignment]
+    setdefault = dict.setdefault  # type: ignore[assignment]
 
     def finish(self) -> constantdict[K, V]:
         """Return an immutable version of this :class:`constantmutabledict`."""
         self.__class__ = constantdict  # type: ignore[assignment]
-        return self  # type: ignore[return-value]
+        return self
