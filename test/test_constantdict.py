@@ -173,4 +173,27 @@ def test_pop() -> None:
     with pytest.raises(AttributeError):
         cd.pop("a")  # type: ignore[has-type]
 
+
+def test_mutation() -> None:
+    cd: constantdict[str, int] = constantdict(a=1, b=2)
+    cd2: constantdict[str, int] = constantdict(a=1, b=2)
+
+    cd = cd.mutate()
+
+    cd["a"] = 42
+
+    assert cd == {"a": 42, "b": 2}
+
+    with pytest.raises(AttributeError):
+        # mutate() must not affect other instances of the same class
+        cd2["a"] = 43
+
+    cd = cd.finish()
+
+    assert cd == {"a": 42, "b": 2}
+
+    with pytest.raises(AttributeError):
+        cd["a"] = 43
+
+
 # }}}
