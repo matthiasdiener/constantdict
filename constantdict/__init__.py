@@ -151,9 +151,11 @@ class constantmutabledict(constantdict[K, V]):  # noqa: N801
 
     __hash__ = _del_attr  # type: ignore[assignment]
 
-    __delitem__ = dict.__delitem__  # type: ignore[assignment]
-    __ior__ = dict.__ior__
-    __setitem__ = dict.__setitem__  # type: ignore[assignment]
+    __delitem__ = dict.__delitem__
+
+    if hasattr(dict, "__ior__"):
+        __ior__ = dict.__ior__  # pragma: no cover
+    __setitem__ = dict.__setitem__
     clear = dict.clear
     popitem = dict.popitem  # type: ignore[assignment]
     pop = dict.pop  # type: ignore[assignment]
