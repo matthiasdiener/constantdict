@@ -154,6 +154,10 @@ def test_clear() -> None:
 
 
 def test_ior() -> None:
+    if not hasattr(dict, "__ior__"):
+        assert not hasattr(constantdict, "__ior__")
+        pytest.skip("dict.__ior__ not available before Python 3.9")
+
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     cdd = cd
@@ -165,21 +169,19 @@ def test_ior() -> None:
     assert isinstance(cd, constantdict)
     assert cd is not cdd
 
-
     # dict behaves differently
-    cd: dict[str, int] = dict(a=1, b=2)
+    d: dict[str, int] = dict(a=1, b=2)
 
-    cdd = cd
+    dd = d
 
-    cd |= {"a": 10}
+    d |= {"a": 10}
 
-    assert cd == {"a": 10, "b": 2}
-    assert cdd == {"a": 10, "b": 2}
-    assert isinstance(cd, dict)
-    assert cd is cdd
+    assert d == {"a": 10, "b": 2}
+    assert dd == {"a": 10, "b": 2}
+    assert isinstance(d, dict)
+    assert d is dd
 
-
-
+    # frozenset behaves like constantdict:
     fs = frozenset([1, 2])
     fsd = fs
     fs |= {3}

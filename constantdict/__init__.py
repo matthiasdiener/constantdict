@@ -69,7 +69,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
         """Return a string representation of this :class:`constantdict`."""
         return f"{self.__class__.__name__}({dict(self)!r})"
 
-    def __reduce__(self) -> str | tuple[Any, ...]:
+    def __reduce__(self) -> str | tuple[object, ...]:
         """Return pickling information for this :class:`constantdict`."""
         # Do not store the cached hash value when pickling
         # as the value might change across Python invocations.
@@ -78,18 +78,20 @@ class constantdict(Dict[K, V]):  # noqa: N801
         # which would raise an exception in constantdict.
         return (self.__class__, (dict(self),))
 
-    def __or__(self, other: Any) -> constantdict[K, V]:  # type: ignore[override]
-        """Return the union of this :class:`constantdict` and *other*."""
-        if not isinstance(other, (dict, self.__class__)):
-            return NotImplemented
-        return self.update(other)
+    if hasattr(dict, "__or__"):  # Python 3.9+
+        def __or__(self, other: object) -> constantdict[K, V]:  # type: ignore[override]
+            """Return the union of this :class:`constantdict` and *other*."""
+            if not isinstance(other, (dict, self.__class__)):
+                return NotImplemented
+            return self.update(other)
 
-    # Like frozenset.__ior__, constantdict.__ior__ should return a new instance
-    __ior__ = __or__
+    if hasattr(dict, "__ior__"):  # Python 3.9+
+        # Like frozenset.__ior__, constantdict.__ior__ must return a new instance
+        __ior__ = __or__  # type: ignore[assignment]
 
     def copy(self) -> dict[K, V]:
         """Return a shallow copy of this :class:`constantdict`."""
-        return self.__class__(dict(self))
+        return self.__class__(self)
 
     # {{{ methods that return a modified copy of the dictionary
 
