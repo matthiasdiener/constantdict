@@ -36,7 +36,7 @@ except ModuleNotFoundError:  # pragma: no cover
 __version__ = importlib_metadata.version(__package__ or __name__)
 
 
-from typing import Any, Dict, Type, TypeVar
+from typing import Any, Dict, TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -51,7 +51,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     """An immutable dictionary."""
 
     @classmethod
-    def fromkeys(cls: Type[dict[K, V]], *args: Any,
+    def fromkeys(cls: type[dict[K, V]], *args: Any,
                  **kwargs: Any) -> Any:
         """Create a new :class:`constantdict` from supplied keys and values."""
         # dict.fromkeys calls __setitem__, hence need to convert from a 'dict'
@@ -109,7 +109,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     remove = delete
 
     def update(self,  # type: ignore[override]
-               other: Dict[K, V]) -> constantdict[K, V]:
+               other: dict[K, V]) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*."""
         return self.__class__({**self, **other})
 

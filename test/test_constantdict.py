@@ -174,7 +174,7 @@ def test_ior() -> None:
     assert cd is not cdd
 
     # dict behaves differently (i.e., in-place update, not augmented assignment):
-    d: dict[str, int] = dict(a=1, b=2)
+    d: dict[str, int] = {"a": 1, "b": 2}
 
     dd = d
 

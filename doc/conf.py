@@ -3,7 +3,7 @@ from urllib.request import urlopen
 from constantdict import __version__
 
 _conf_url = \
-    "https://raw.githubusercontent.com/matthiasdiener/sphinxconfig/main/sphinxconfig.py"  # noqa: E501
+    "https://raw.githubusercontent.com/matthiasdiener/sphinxconfig/main/sphinxconfig.py"
 with urlopen(_conf_url) as _inf:
     exec(compile(_inf.read(), _conf_url, "exec"), globals())
 
