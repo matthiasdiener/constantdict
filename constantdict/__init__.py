@@ -79,7 +79,8 @@ class constantdict(Dict[K, V]):  # noqa: N801
         return (self.__class__, (dict(self),))
 
     if hasattr(dict, "__or__"):  # Python 3.9+
-        def __or__(self, other: object) -> constantdict[K, V]:  # type: ignore[override]
+        def __or__(self,  # type: ignore[override]
+                   other: object) -> constantdict[K, V]:
             """Return the union of this :class:`constantdict` and *other*."""
             if not isinstance(other, (dict, self.__class__)):
                 return NotImplemented

@@ -58,6 +58,10 @@ def test_set_delete_remove_update() -> None:
 
 
 def test_or() -> None:
+    if not hasattr(dict, "__or__"):
+        assert not hasattr(constantdict, "__or__")
+        pytest.skip("dict.__or__ not available before Python 3.9")
+
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     assert cd | {"a": 10} == constantdict(a=10, b=2) == {"a": 10, "b": 2}
@@ -162,7 +166,7 @@ def test_ior() -> None:
 
     cdd = cd
 
-    cd |= {"a": 10}
+    cd |= {"a": 10}  # type: ignore[has-type]
 
     assert cd == {"a": 10, "b": 2}
     assert cdd == {"a": 1, "b": 2}
