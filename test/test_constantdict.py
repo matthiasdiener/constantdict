@@ -207,4 +207,11 @@ def test_pop() -> None:
     with pytest.raises(AttributeError):
         cd.pop("a")  # type: ignore[has-type]
 
+
+def test_reversed() -> None:
+    cd: constantdict[str, int] = constantdict(a=1, b=2)
+
+    assert list(reversed(cd)) == ["b", "a"] == list(reversed(cd.keys()))
+    assert list(reversed(cd)) == list(reversed({"a": 1, "b": 2}))
+
 # }}}
