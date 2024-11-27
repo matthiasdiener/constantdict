@@ -84,6 +84,9 @@ class constantdict(Dict[K, V]):  # noqa: N801
             return NotImplemented
         return self.update(other)
 
+    # Like frozenset.__ior__, constantdict.__ior__ should return a new instance
+    __ior__ = __or__
+
     def copy(self) -> dict[K, V]:
         """Return a shallow copy of this :class:`constantdict`."""
         return self.__class__(dict(self))
@@ -92,9 +95,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
     def set(self, key: K, val: V) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with the item at *key* set to *val*."""
-        new = dict(self)
-        new[key] = val
-        return self.__class__(new)
+        return self.__class__({**self, key: val})
 
     def delete(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at the given key."""
@@ -107,9 +108,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     def update(self,  # type: ignore[override]
                other: Dict[K, V]) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*."""
-        new = dict(self)
-        new.update(other)
-        return self.__class__(new)
+        return self.__class__({**self, **other})
 
     def discard(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at the given key.

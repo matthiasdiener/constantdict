@@ -156,10 +156,37 @@ def test_clear() -> None:
 def test_ior() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
+    cdd = cd
+
     cd |= {"a": 10}
 
-    assert cd == constantdict(a=10, b=2) == {"a": 10, "b": 2}
+    assert cd == {"a": 10, "b": 2}
+    assert cdd == {"a": 1, "b": 2}
     assert isinstance(cd, constantdict)
+    assert cd is not cdd
+
+
+    # dict behaves differently
+    cd: dict[str, int] = dict(a=1, b=2)
+
+    cdd = cd
+
+    cd |= {"a": 10}
+
+    assert cd == {"a": 10, "b": 2}
+    assert cdd == {"a": 10, "b": 2}
+    assert isinstance(cd, dict)
+    assert cd is cdd
+
+
+
+    fs = frozenset([1, 2])
+    fsd = fs
+    fs |= {3}
+
+    assert fs == frozenset([1, 2, 3])
+    assert fsd == frozenset([1, 2])
+    assert fs is not fsd
 
 
 def test_popitem() -> None:
