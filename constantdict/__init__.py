@@ -127,7 +127,6 @@ class constantdict(Dict[K, V]):  # noqa: N801
     # {{{ deleted methods
 
     __delitem__ = _del_attr
-    __ior__ = _del_attr  # type: ignore[assignment]
     __setitem__ = _del_attr
     clear = _del_attr
     popitem = _del_attr  # type: ignore[assignment]

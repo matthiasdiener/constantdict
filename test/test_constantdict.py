@@ -156,8 +156,10 @@ def test_clear() -> None:
 def test_ior() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
-    with pytest.raises(AttributeError):
-        cd |= {"a": 10}  # type: ignore[has-type]
+    cd |= {"a": 10}
+
+    assert cd == constantdict(a=10, b=2) == {"a": 10, "b": 2}
+    assert isinstance(cd, constantdict)
 
 
 def test_popitem() -> None:
