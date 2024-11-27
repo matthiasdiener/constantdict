@@ -19,7 +19,7 @@ len_dict = len(basedict)
 
 for dict_impl in (dict, constantdict, immutabledict, Map, frozendict, pmap):
 
-    name = dict_impl.__name__  # type: ignore[attr-defined]
+    name = dict_impl.__name__
 
     print(name)
 
