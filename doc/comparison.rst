@@ -1,6 +1,43 @@
 Comparison of ``dict`` implementations
 ======================================
 
+Features
+--------
+
+.. list-table::
+   :header-rows: 1
+
+   * - Package
+     - License
+     - Deterministic iteration order
+     - Frozen/Immutable
+   * - :class:`dict`
+     - ✅ PSF
+     - ✅
+     - ❌
+   * - `constantdict <https://github.com/matthiasdiener/constantdict>`__
+     - ✅ MIT
+     - ✅
+     - ✅
+   * - `immutabledict <https://github.com/corenting/immutabledict>`__
+     - ✅ MIT
+     - ✅
+     - ✅
+   * - `immutables.Map <https://github.com/MagicStack/immutables>`__
+     - ✅ Apache 2.0
+     - ❌
+     - ✅
+   * - `frozendict <https://github.com/Marco-Sulla/python-frozendict>`__
+     - ❌ LGPL-3.0
+     - ✅
+     - ✅
+
+   * - `pyrsistent.PMap <https://github.com/tobgu/pyrsistent>`__
+     - ✅ MIT
+     - ❌
+     - ✅
+
+
 Performance
 -----------
 
