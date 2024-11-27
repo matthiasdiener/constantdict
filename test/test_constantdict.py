@@ -1,5 +1,4 @@
 import sys
-from typing import Any
 
 import pytest
 
@@ -210,7 +209,7 @@ def test_pop() -> None:
 
 
 def test_mutation() -> None:
-    cd: Any = constantdict(a=1, b=2)
+    cd = constantdict(a=1, b=2)
     cd2 = constantdict(a=1, b=2)
 
     with pytest.raises(AttributeError):
@@ -224,6 +223,7 @@ def test_mutation() -> None:
     cdm["a"] = 42
 
     with pytest.raises(AttributeError):
+        # Hashing is disallowed
         hash(cdm)
 
     hash(cd)
@@ -236,6 +236,7 @@ def test_mutation() -> None:
 
     cdmm = cdm.finish()
 
+    # Hashing is allowed again
     hash(cdmm)
 
     assert cdmm == {"a": 42, "b": 2}

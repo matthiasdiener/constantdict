@@ -143,7 +143,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     def mutate(self) -> constantmutabledict[K, V]:
         """Return a mutable version of this :class:`constantdict`."""
         # Based on the immutables.Map API.
-        # This needs to make a copy since the original dictionary should
+        # This needs to make a copy since the original dictionary must
         # not be modified.
         return constantmutabledict(self)
 
@@ -158,7 +158,8 @@ class constantmutabledict(constantdict[K, V]):  # noqa: N801
     __delitem__ = dict.__delitem__
 
     if hasattr(dict, "__ior__"):
-        __ior__ = dict.__ior__  # pragma: no cover
+        __ior__ = dict.__ior__
+
     __setitem__ = dict.__setitem__
     clear = dict.clear
     popitem = dict.popitem  # type: ignore[assignment]
