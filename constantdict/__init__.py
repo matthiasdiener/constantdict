@@ -36,7 +36,8 @@ except ModuleNotFoundError:  # pragma: no cover
 __version__ = importlib_metadata.version(__package__ or __name__)
 
 
-from typing import Any, Dict, Type, TypeVar
+import sys
+from typing import Any, Dict, TypeVar  # <3.9 needs Dict, not dict
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -51,7 +52,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     """An immutable dictionary."""
 
     @classmethod
-    def fromkeys(cls: Type[dict[K, V]], *args: Any,
+    def fromkeys(cls: type[dict[K, V]], *args: Any,
                  **kwargs: Any) -> Any:
         """Create a new :class:`constantdict` from supplied keys and values."""
         # dict.fromkeys calls __setitem__, hence need to convert from a 'dict'
@@ -69,7 +70,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
         """Return a string representation of this :class:`constantdict`."""
         return f"{self.__class__.__name__}({dict(self)!r})"
 
-    def __reduce__(self) -> str | tuple[Any, ...]:
+    def __reduce__(self) -> str | tuple[object, ...]:
         """Return pickling information for this :class:`constantdict`."""
         # Do not store the cached hash value when pickling
         # as the value might change across Python invocations.
@@ -78,11 +79,17 @@ class constantdict(Dict[K, V]):  # noqa: N801
         # which would raise an exception in constantdict.
         return (self.__class__, (dict(self),))
 
-    def __or__(self, other: Any) -> constantdict[K, V]:  # type: ignore[override]
-        """Return the union of this :class:`constantdict` and *other*."""
-        if not isinstance(other, (dict, self.__class__)):
-            return NotImplemented
-        return self.update(other)
+    if sys.version_info >= (3, 9):
+        def __or__(self,  # type: ignore[override]
+                   other: object) -> constantdict[K, V]:
+            """Return the union of this :class:`constantdict` and *other*."""
+            if not isinstance(other, (dict, self.__class__)):
+                return NotImplemented
+            return self.update(other)
+
+    if sys.version_info >= (3, 9):
+        # Like frozenset.__ior__, constantdict.__ior__ must return a new instance
+        __ior__ = __or__  # type: ignore[assignment]
 
     def copy(self) -> dict[K, V]:
         """Return a shallow copy of this :class:`constantdict`."""
@@ -103,11 +110,9 @@ class constantdict(Dict[K, V]):  # noqa: N801
     remove = delete
 
     def update(self,  # type: ignore[override]
-               other: Dict[K, V]) -> constantdict[K, V]:
+               other: dict[K, V]) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*."""
-        new = dict(self)
-        new.update(other)
-        return self.__class__(new)
+        return self.__class__({**self, **other})
 
     def discard(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at the given key.
@@ -125,7 +130,6 @@ class constantdict(Dict[K, V]):  # noqa: N801
     # {{{ deleted methods
 
     __delitem__ = _del_attr
-    __ior__ = _del_attr  # type: ignore[assignment]
     __setitem__ = _del_attr
     clear = _del_attr
     popitem = _del_attr  # type: ignore[assignment]
