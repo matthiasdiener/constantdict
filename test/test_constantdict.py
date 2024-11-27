@@ -1,3 +1,5 @@
+import sys
+
 import pytest
 
 from constantdict import constantdict
@@ -58,7 +60,7 @@ def test_set_delete_remove_update() -> None:
 
 
 def test_or() -> None:
-    if not hasattr(dict, "__or__"):
+    if not sys.version_info >= (3, 9):
         assert not hasattr(constantdict, "__or__")
         pytest.skip("dict.__or__ not available before Python 3.9")
 
@@ -71,11 +73,8 @@ def test_or() -> None:
     assert isinstance(cd | {"a": 10}, constantdict)
     assert isinstance(cd | {"c": 17}, constantdict)
 
-    import sys
-    if sys.version_info >= (3, 9):
-        # | operator for dict was introduced in Python 3.9
-        assert not isinstance({"a": 10} | cd, constantdict)
-        assert isinstance({"a": 10} | cd, dict)
+    assert not isinstance({"a": 10} | cd, constantdict)
+    assert isinstance({"a": 10} | cd, dict)
 
     assert isinstance(cd | cd, constantdict)
     assert cd | cd == cd
@@ -158,7 +157,7 @@ def test_clear() -> None:
 
 
 def test_ior() -> None:
-    if not hasattr(dict, "__ior__"):
+    if not sys.version_info >= (3, 9):
         assert not hasattr(constantdict, "__ior__")
         pytest.skip("dict.__ior__ not available before Python 3.9")
 
@@ -174,7 +173,7 @@ def test_ior() -> None:
     assert cd is not cdd
 
     # dict behaves differently (i.e., in-place update, not augmented assignment):
-    d: dict[str, int] = dict(a=1, b=2)
+    d: dict[str, int] = {"a": 1, "b": 2}
 
     dd = d
 

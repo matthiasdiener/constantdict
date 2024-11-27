@@ -36,7 +36,8 @@ except ModuleNotFoundError:  # pragma: no cover
 __version__ = importlib_metadata.version(__package__ or __name__)
 
 
-from typing import Any, Dict, Type, TypeVar
+import sys
+from typing import Any, Dict, TypeVar  # <3.9 needs Dict, not dict
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -51,7 +52,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     """An immutable dictionary."""
 
     @classmethod
-    def fromkeys(cls: Type[dict[K, V]], *args: Any,
+    def fromkeys(cls: type[dict[K, V]], *args: Any,
                  **kwargs: Any) -> Any:
         """Create a new :class:`constantdict` from supplied keys and values."""
         # dict.fromkeys calls __setitem__, hence need to convert from a 'dict'
@@ -78,7 +79,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
         # which would raise an exception in constantdict.
         return (self.__class__, (dict(self),))
 
-    if hasattr(dict, "__or__"):  # Python 3.9+
+    if sys.version_info >= (3, 9):
         def __or__(self,  # type: ignore[override]
                    other: object) -> constantdict[K, V]:
             """Return the union of this :class:`constantdict` and *other*."""
@@ -86,7 +87,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
                 return NotImplemented
             return self.update(other)
 
-    if hasattr(dict, "__ior__"):  # Python 3.9+
+    if sys.version_info >= (3, 9):
         # Like frozenset.__ior__, constantdict.__ior__ must return a new instance
         __ior__ = __or__  # type: ignore[assignment]
 
@@ -109,7 +110,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     remove = delete
 
     def update(self,  # type: ignore[override]
-               other: Dict[K, V]) -> constantdict[K, V]:
+               other: dict[K, V]) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*."""
         return self.__class__({**self, **other})
 

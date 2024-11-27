@@ -8,18 +8,18 @@ on:
   - cron:  '5 0 * * *'
 
 jobs:
-  flake8:
+  ruff:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.8
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.8'
-    - name: Flake8 test
+        python-version: '3.x'
+    - name: Ruff check
       run: |
-        python -m pip install flake8 pep8-naming flake8-quotes flake8-bugbear flake8-pyproject flake8-isort
-        python -m flake8 --show-source --statistics "$(basename $GITHUB_REPOSITORY)" test doc examples && echo "Flake8 found no errors."
+        python -m pip install ruff
+        ruff check
 
   mypy:
     runs-on: ubuntu-latest
