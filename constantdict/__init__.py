@@ -69,7 +69,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
         """Return a string representation of this :class:`constantdict`."""
         return f"{self.__class__.__name__}({dict(self)!r})"
 
-    def __reduce__(self) -> str | tuple[Any, ...]:
+    def __reduce__(self) -> str | tuple[object, ...]:
         """Return pickling information for this :class:`constantdict`."""
         # Do not store the cached hash value when pickling
         # as the value might change across Python invocations.
@@ -78,23 +78,27 @@ class constantdict(Dict[K, V]):  # noqa: N801
         # which would raise an exception in constantdict.
         return (self.__class__, (dict(self),))
 
-    def __or__(self, other: Any) -> constantdict[K, V]:  # type: ignore[override]
-        """Return the union of this :class:`constantdict` and *other*."""
-        if not isinstance(other, (dict, self.__class__)):
-            return NotImplemented
-        return self.update(other)
+    if hasattr(dict, "__or__"):  # Python 3.9+
+        def __or__(self,  # type: ignore[override]
+                   other: object) -> constantdict[K, V]:
+            """Return the union of this :class:`constantdict` and *other*."""
+            if not isinstance(other, (dict, self.__class__)):
+                return NotImplemented
+            return self.update(other)
+
+    if hasattr(dict, "__ior__"):  # Python 3.9+
+        # Like frozenset.__ior__, constantdict.__ior__ must return a new instance
+        __ior__ = __or__  # type: ignore[assignment]
 
     def copy(self) -> dict[K, V]:
         """Return a shallow copy of this :class:`constantdict`."""
-        return self.__class__(dict(self))
+        return self.__class__(self)
 
     # {{{ methods that return a modified copy of the dictionary
 
     def set(self, key: K, val: V) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with the item at *key* set to *val*."""
-        new = dict(self)
-        new[key] = val
-        return self.__class__(new)
+        return self.__class__({**self, key: val})
 
     def delete(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at the given key."""
@@ -107,9 +111,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     def update(self,  # type: ignore[override]
                other: Dict[K, V]) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*."""
-        new = dict(self)
-        new.update(other)
-        return self.__class__(new)
+        return self.__class__({**self, **other})
 
     def discard(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at the given key.
@@ -127,7 +129,6 @@ class constantdict(Dict[K, V]):  # noqa: N801
     # {{{ deleted methods
 
     __delitem__ = _del_attr
-    __ior__ = _del_attr  # type: ignore[assignment]
     __setitem__ = _del_attr
     clear = _del_attr
     popitem = _del_attr  # type: ignore[assignment]

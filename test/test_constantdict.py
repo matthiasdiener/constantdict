@@ -58,6 +58,10 @@ def test_set_delete_remove_update() -> None:
 
 
 def test_or() -> None:
+    if not hasattr(dict, "__or__"):
+        assert not hasattr(constantdict, "__or__")
+        pytest.skip("dict.__or__ not available before Python 3.9")
+
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     assert cd | {"a": 10} == constantdict(a=10, b=2) == {"a": 10, "b": 2}
@@ -154,10 +158,41 @@ def test_clear() -> None:
 
 
 def test_ior() -> None:
+    if not hasattr(dict, "__ior__"):
+        assert not hasattr(constantdict, "__ior__")
+        pytest.skip("dict.__ior__ not available before Python 3.9")
+
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
-    with pytest.raises(AttributeError):
-        cd |= {"a": 10}  # type: ignore[has-type]
+    cdd = cd
+
+    cd |= {"a": 10}  # type: ignore[has-type]
+
+    assert cd == {"a": 10, "b": 2}
+    assert cdd == {"a": 1, "b": 2}
+    assert isinstance(cd, constantdict)
+    assert cd is not cdd
+
+    # dict behaves differently (i.e., in-place update, not augmented assignment):
+    d: dict[str, int] = dict(a=1, b=2)
+
+    dd = d
+
+    d |= {"a": 10}
+
+    assert d == {"a": 10, "b": 2}
+    assert dd == {"a": 10, "b": 2}
+    assert isinstance(d, dict)
+    assert d is dd
+
+    # frozenset behaves like constantdict:
+    fs = frozenset([1, 2])
+    fsd = fs
+    fs |= {3}
+
+    assert fs == frozenset([1, 2, 3])
+    assert fsd == frozenset([1, 2])
+    assert fs is not fsd
 
 
 def test_popitem() -> None:
