@@ -173,7 +173,7 @@ def test_ior() -> None:
     assert isinstance(cd, constantdict)
     assert cd is not cdd
 
-    # dict behaves differently
+    # dict behaves differently (i.e., in-place update, not augmented assignment):
     d: dict[str, int] = dict(a=1, b=2)
 
     dd = d
