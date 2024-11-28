@@ -36,6 +36,12 @@ jobs:
         python -m pip install -e .
         ./run-mypy.sh
 
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: crate-ci/typos@master
+
   pylint:
     runs-on: ubuntu-latest
     steps:
