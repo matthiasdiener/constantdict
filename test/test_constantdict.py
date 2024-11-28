@@ -59,6 +59,16 @@ def test_set_delete_remove_update() -> None:
     assert isinstance(cd, constantdict)
 
 
+def test_reversed() -> None:
+    if sys.version_info < (3, 8):
+        pytest.skip("Python 3.7 does not support reversed() on dict objects")
+
+    cd: constantdict[str, int] = constantdict(a=1, b=2)
+
+    assert list(reversed(cd)) == ["b", "a"] == list(reversed(cd.keys()))
+    assert list(reversed(cd)) == list(reversed({"a": 1, "b": 2}))
+
+
 def test_or() -> None:
     if not sys.version_info >= (3, 9):
         assert not hasattr(constantdict, "__or__")
