@@ -89,6 +89,44 @@ def test_or() -> None:
         cd | None
 
 
+def test_ior() -> None:
+    if not sys.version_info >= (3, 9):
+        assert not hasattr(constantdict, "__ior__")
+        pytest.skip("dict.__ior__ not available before Python 3.9")
+
+    cd: constantdict[str, int] = constantdict(a=1, b=2)
+
+    cdd = cd
+
+    cd |= {"a": 10}  # type: ignore[has-type]
+
+    assert cd == {"a": 10, "b": 2}
+    assert cdd == {"a": 1, "b": 2}
+    assert isinstance(cd, constantdict)
+    assert cd is not cdd
+
+    # dict behaves differently (i.e., in-place update, not augmented assignment):
+    d: dict[str, int] = {"a": 1, "b": 2}
+
+    dd = d
+
+    d |= {"a": 10}
+
+    assert d == {"a": 10, "b": 2}
+    assert dd == {"a": 10, "b": 2}
+    assert isinstance(d, dict)
+    assert d is dd
+
+    # frozenset behaves like constantdict:
+    fs = frozenset([1, 2])
+    fsd = fs
+    fs |= {3}
+
+    assert fs == frozenset([1, 2, 3])
+    assert fsd == frozenset([1, 2])
+    assert fs is not fsd
+
+
 def test_copy() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
@@ -156,44 +194,6 @@ def test_clear() -> None:
         cd.clear()
 
 
-def test_ior() -> None:
-    if not sys.version_info >= (3, 9):
-        assert not hasattr(constantdict, "__ior__")
-        pytest.skip("dict.__ior__ not available before Python 3.9")
-
-    cd: constantdict[str, int] = constantdict(a=1, b=2)
-
-    cdd = cd
-
-    cd |= {"a": 10}  # type: ignore[has-type]
-
-    assert cd == {"a": 10, "b": 2}
-    assert cdd == {"a": 1, "b": 2}
-    assert isinstance(cd, constantdict)
-    assert cd is not cdd
-
-    # dict behaves differently (i.e., in-place update, not augmented assignment):
-    d: dict[str, int] = {"a": 1, "b": 2}
-
-    dd = d
-
-    d |= {"a": 10}
-
-    assert d == {"a": 10, "b": 2}
-    assert dd == {"a": 10, "b": 2}
-    assert isinstance(d, dict)
-    assert d is dd
-
-    # frozenset behaves like constantdict:
-    fs = frozenset([1, 2])
-    fsd = fs
-    fs |= {3}
-
-    assert fs == frozenset([1, 2, 3])
-    assert fsd == frozenset([1, 2])
-    assert fs is not fsd
-
-
 def test_popitem() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
@@ -206,5 +206,12 @@ def test_pop() -> None:
 
     with pytest.raises(AttributeError):
         cd.pop("a")  # type: ignore[has-type]
+
+
+def test_setdefault() -> None:
+    cd: constantdict[str, int] = constantdict()
+
+    with pytest.raises(AttributeError):
+        cd.setdefault("a", 10)  # type: ignore[has-type]
 
 # }}}

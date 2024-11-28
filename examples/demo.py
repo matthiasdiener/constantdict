@@ -10,7 +10,7 @@ print(hash(cd), cd)
 
 # Attempting to modify the constantdict raises an AttributeError
 try:
-    # Similar for pop(), popitem(), clear(), __ior__(), del, and setdefault()
+    # Similar for pop(), popitem(), clear(), del, and setdefault()
     cd[4] = 12
 except AttributeError:
     pass
