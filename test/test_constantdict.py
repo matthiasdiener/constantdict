@@ -59,6 +59,16 @@ def test_set_delete_remove_update() -> None:
     assert isinstance(cd, constantdict)
 
 
+def test_reversed() -> None:
+    if sys.version_info < (3, 8):
+        pytest.skip("Python 3.7 does not support reversed() on dict objects")
+
+    cd: constantdict[str, int] = constantdict(a=1, b=2)
+
+    assert list(reversed(cd)) == ["b", "a"] == list(reversed(cd.keys()))
+    assert list(reversed(cd)) == list(reversed({"a": 1, "b": 2}))
+
+
 def test_or() -> None:
     if not sys.version_info >= (3, 9):
         assert not hasattr(constantdict, "__or__")
@@ -87,6 +97,44 @@ def test_or() -> None:
 
     with pytest.raises(TypeError):
         cd | None
+
+
+def test_ior() -> None:
+    if not sys.version_info >= (3, 9):
+        assert not hasattr(constantdict, "__ior__")
+        pytest.skip("dict.__ior__ not available before Python 3.9")
+
+    cd: constantdict[str, int] = constantdict(a=1, b=2)
+
+    cdd = cd
+
+    cd |= {"a": 10}  # type: ignore[has-type]
+
+    assert cd == {"a": 10, "b": 2}
+    assert cdd == {"a": 1, "b": 2}
+    assert isinstance(cd, constantdict)
+    assert cd is not cdd
+
+    # dict behaves differently (i.e., in-place update, not augmented assignment):
+    d: dict[str, int] = {"a": 1, "b": 2}
+
+    dd = d
+
+    d |= {"a": 10}
+
+    assert d == {"a": 10, "b": 2}
+    assert dd == {"a": 10, "b": 2}
+    assert isinstance(d, dict)
+    assert d is dd
+
+    # frozenset behaves like constantdict:
+    fs = frozenset([1, 2])
+    fsd = fs
+    fs |= {3}
+
+    assert fs == frozenset([1, 2, 3])
+    assert fsd == frozenset([1, 2])
+    assert fs is not fsd
 
 
 def test_copy() -> None:
@@ -156,44 +204,6 @@ def test_clear() -> None:
         cd.clear()
 
 
-def test_ior() -> None:
-    if not sys.version_info >= (3, 9):
-        assert not hasattr(constantdict, "__ior__")
-        pytest.skip("dict.__ior__ not available before Python 3.9")
-
-    cd: constantdict[str, int] = constantdict(a=1, b=2)
-
-    cdd = cd
-
-    cd |= {"a": 10}  # type: ignore[has-type]
-
-    assert cd == {"a": 10, "b": 2}
-    assert cdd == {"a": 1, "b": 2}
-    assert isinstance(cd, constantdict)
-    assert cd is not cdd
-
-    # dict behaves differently (i.e., in-place update, not augmented assignment):
-    d: dict[str, int] = {"a": 1, "b": 2}
-
-    dd = d
-
-    d |= {"a": 10}
-
-    assert d == {"a": 10, "b": 2}
-    assert dd == {"a": 10, "b": 2}
-    assert isinstance(d, dict)
-    assert d is dd
-
-    # frozenset behaves like constantdict:
-    fs = frozenset([1, 2])
-    fsd = fs
-    fs |= {3}
-
-    assert fs == frozenset([1, 2, 3])
-    assert fsd == frozenset([1, 2])
-    assert fs is not fsd
-
-
 def test_popitem() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
@@ -206,6 +216,15 @@ def test_pop() -> None:
 
     with pytest.raises(AttributeError):
         cd.pop("a")  # type: ignore[has-type]
+
+
+def test_setdefault() -> None:
+    cd: constantdict[str, int] = constantdict()
+
+    with pytest.raises(AttributeError):
+        cd.setdefault("a", 10)  # type: ignore[has-type]
+
+# }}}
 
 
 def test_mutation() -> None:
@@ -245,6 +264,3 @@ def test_mutation() -> None:
         cd["a"] = 43
 
     assert cd == {"a": 1, "b": 2}
-
-
-# }}}

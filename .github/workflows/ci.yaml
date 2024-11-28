@@ -36,6 +36,12 @@ jobs:
         python -m pip install -e .
         ./run-mypy.sh
 
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: crate-ci/typos@master
+
   pylint:
     runs-on: ubuntu-latest
     steps:
@@ -49,18 +55,6 @@ jobs:
         python -m pip install frozendict immutables immutabledict pyrsistent
         python -m pip install -e .
         ./run-pylint.sh
-
-  pydocstyle:
-      runs-on: ubuntu-latest
-      steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - name: Run Pydocstyle
-        run: |
-          python -m pip install pydocstyle
-          python -m pydocstyle "$(basename $GITHUB_REPOSITORY)" && echo "pydocstyle found no errors."
 
   pytest:
     runs-on: ubuntu-latest

@@ -2,11 +2,6 @@ constantdict
 ============
 
 .. autoclass:: constantdict.constantdict
-    :members:
-    :member-order: bysource
-    :show-inheritance:
-    :special-members:
-    :exclude-members: __weakref__
 
 .. autoclass:: constantdict.constantmutabledict
 
