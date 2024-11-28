@@ -13,7 +13,8 @@ dictionary.
 .. literalinclude:: ../examples/demo.py
    :language: python
 
-Some additional methods are provided, see the reference below.
+Some additional methods compared to :class:`dict` are provided, see the API
+reference below.
 
 
 API reference
@@ -23,7 +24,7 @@ API reference
    :maxdepth: 1
 
    constantdict
-   speed
+   comparison
 
    🚀 Github <https://github.com/matthiasdiener/constantdict>
    💾 Download Releases <https://pypi.org/project/constantdict>

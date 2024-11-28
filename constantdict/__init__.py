@@ -49,7 +49,31 @@ def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
 
 
 class constantdict(Dict[K, V]):  # noqa: N801
-    """An immutable dictionary."""
+    """An immutable dictionary that does not allow modifications after
+    creation. This class behaves mostly like a :class:`dict`,
+    but with the following differences.
+
+    Additional methods compared to :class:`dict`:
+
+    .. automethod:: __hash__
+
+    Methods that return a modified copy of the :class:`constantdict`:
+
+    .. automethod:: set
+    .. automethod:: delete
+    .. automethod:: update
+    .. automethod:: discard
+
+    Deleted methods compared to :class:`dict`
+    (these raise an :exc:`AttributeError` when called):
+
+    .. method:: __delitem__
+    .. method:: __setitem__
+    .. method:: clear
+    .. method:: popitem
+    .. method:: pop
+    .. method:: setdefault
+    """
 
     @classmethod
     def fromkeys(cls: type[dict[K, V]], *args: Any,
@@ -59,7 +83,9 @@ class constantdict(Dict[K, V]):  # noqa: N801
         return cls(dict.fromkeys(*args, **kwargs))
 
     def __hash__(self) -> int:  # type: ignore[override]
-        """Return the hash of this :class:`constantdict`."""
+        """Return a hash of this :class:`constantdict`. This
+        :class:`constantdict` is hashable if all of its keys and values are
+        hashable. Once computed, the hash is cached."""
         try:
             return self._hash
         except AttributeError:
@@ -70,7 +96,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
         """Return a string representation of this :class:`constantdict`."""
         return f"{self.__class__.__name__}({dict(self)!r})"
 
-    def __reduce__(self) -> str | tuple[object, ...]:
+    def __reduce__(self) -> str | tuple[type, tuple[dict[K, V]]]:
         """Return pickling information for this :class:`constantdict`."""
         # Do not store the cached hash value when pickling
         # as the value might change across Python invocations.
@@ -80,14 +106,13 @@ class constantdict(Dict[K, V]):  # noqa: N801
         return (self.__class__, (dict(self),))
 
     if sys.version_info >= (3, 9):
-        def __or__(self,  # type: ignore[override]
-                   other: object) -> constantdict[K, V]:
+        # Python 3.9 introduced __or__ and __ior__ for dict
+        def __or__(self, other: object) -> constantdict[K, V]:  # type: ignore[override]
             """Return the union of this :class:`constantdict` and *other*."""
             if not isinstance(other, (dict, self.__class__)):
                 return NotImplemented
             return self.update(other)
 
-    if sys.version_info >= (3, 9):
         # Like frozenset.__ior__, constantdict.__ior__ must return a new instance
         __ior__ = __or__  # type: ignore[assignment]
 
@@ -102,16 +127,24 @@ class constantdict(Dict[K, V]):  # noqa: N801
         return self.__class__({**self, key: val})
 
     def delete(self, key: K) -> constantdict[K, V]:
-        """Return a new :class:`constantdict` without the item at the given key."""
+        """Return a new :class:`constantdict` without the item at *key*.
+
+        Raise a :exc:`KeyError` if *key* is not present.
+        """
         new = dict(self)
         del new[key]
         return self.__class__(new)
 
     remove = delete
 
-    def update(self,  # type: ignore[override]
-               other: dict[K, V]) -> constantdict[K, V]:
-        """Return a new :class:`constantdict` with updated items from *other*."""
+    def update(self, other: dict[K, V]) -> constantdict[K, V]:  # type: ignore[override]
+        """Return a new :class:`constantdict` with updated items from *other*.
+
+        .. note::
+
+            In contrast to :meth:`dict.update`, this method does not modify the
+            original :class:`constantdict`, but creates a new, updated copy.
+        """
         return self.__class__({**self, **other})
 
     def discard(self, key: K) -> constantdict[K, V]:
