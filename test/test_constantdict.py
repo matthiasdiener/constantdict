@@ -225,3 +225,42 @@ def test_setdefault() -> None:
         cd.setdefault("a", 10)  # type: ignore[has-type]
 
 # }}}
+
+
+def test_mutation() -> None:
+    cd = constantdict(a=1, b=2)
+    cd2 = constantdict(a=1, b=2)
+
+    with pytest.raises(AttributeError):
+        cd["a"] = 42
+
+    hash(cd)
+
+    cdm = cd.mutate()
+
+    # Mutation is allowed now
+    cdm["a"] = 42
+
+    with pytest.raises(AttributeError):
+        # Hashing is disallowed
+        hash(cdm)
+
+    hash(cd)
+
+    assert cdm == {"a": 42, "b": 2}
+
+    with pytest.raises(AttributeError):
+        # mutate() must not affect other instances of the same class
+        cd2["a"] = 43
+
+    cdmm = cdm.finish()
+
+    # Hashing is allowed again
+    hash(cdmm)
+
+    assert cdmm == {"a": 42, "b": 2}
+
+    with pytest.raises(AttributeError):
+        cd["a"] = 43
+
+    assert cd == {"a": 1, "b": 2}

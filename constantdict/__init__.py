@@ -170,3 +170,36 @@ class constantdict(Dict[K, V]):  # noqa: N801
     setdefault = _del_attr  # type: ignore[assignment]
 
     # }}}
+
+    # {{{ mutation
+
+    def mutate(self) -> constantmutabledict[K, V]:
+        """Return a mutable version of this :class:`constantdict`."""
+        # Based on the immutables.Map API.
+        # This needs to make a copy since the original dictionary must
+        # not be modified.
+        return constantmutabledict(self)
+
+    # }}}
+
+
+class constantmutabledict(constantdict[K, V]):  # noqa: N801
+    """A mutable immutable dictionary."""
+
+    __hash__ = _del_attr  # type: ignore[assignment]
+
+    __delitem__ = dict.__delitem__
+
+    if hasattr(dict, "__ior__"):
+        __ior__ = dict.__ior__
+
+    __setitem__ = dict.__setitem__
+    clear = dict.clear
+    popitem = dict.popitem  # type: ignore[assignment]
+    pop = dict.pop  # type: ignore[assignment]
+    setdefault = dict.setdefault  # type: ignore[assignment]
+
+    def finish(self) -> constantdict[K, V]:
+        """Return an immutable version of this :class:`constantmutabledict`."""
+        self.__class__ = constantdict  # type: ignore[assignment]
+        return self
