@@ -56,6 +56,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     Additional methods compared to :class:`dict`:
 
     .. automethod:: __hash__
+    .. automethod:: mutate
 
     Methods that return a modified copy of the :class:`constantdict`:
 
@@ -113,7 +114,8 @@ class constantdict(Dict[K, V]):  # noqa: N801
                 return NotImplemented
             return self.update(other)
 
-        # Like frozenset.__ior__, constantdict.__ior__ must return a new instance
+        # Like frozenset.__ior__, constantdict.__ior__ must return a new instance,
+        # i.e., augmented assignment instead of in-place modification.
         __ior__ = __or__  # type: ignore[assignment]
 
     def copy(self) -> dict[K, V]:
@@ -174,7 +176,11 @@ class constantdict(Dict[K, V]):  # noqa: N801
     # {{{ mutation
 
     def mutate(self) -> constantmutabledict[K, V]:
-        """Return a mutable version of this :class:`constantdict`."""
+        """Return a mutable version of this :class:`constantdict`.
+
+        Run :meth:`constantmutabledict.finish` to convert back to an immutable
+        :class:`constantdict`.
+        """
         # Based on the immutables.Map API.
         # This needs to make a copy since the original dictionary must
         # not be modified.
@@ -184,22 +190,54 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
 
 class constantmutabledict(constantdict[K, V]):  # noqa: N801
-    """A mutable immutable dictionary."""
+    """A mutable dictionary that can be converted back to a
+    :class:`constantdict` without copying.
+
+    Additional methods compared to :class:`constantdict`:
+
+    .. automethod:: finish
+
+    Changed methods compared to :class:`constantdict`:
+
+    .. method:: __hash__
+    .. method:: mutate
+
+        These methods are not available in :class:`constantmutabledict`.
+
+    .. method:: __delitem__
+    .. method:: __setitem__
+    .. method:: clear
+    .. method:: popitem
+    .. method:: pop
+    .. method:: setdefault
+    .. method:: update
+
+        These methods modify the dictionary in place and operate in the same
+        way as in :class:`dict`.
+    """
 
     __hash__ = _del_attr  # type: ignore[assignment]
+    mutate = _del_attr  # type: ignore[assignment]
 
-    __delitem__ = dict.__delitem__
+    __delitem__ = dict.__delitem__  # type: ignore[assignment]
 
-    if hasattr(dict, "__ior__"):
+    if sys.version_info >= (3, 9):
         __ior__ = dict.__ior__
 
-    __setitem__ = dict.__setitem__
+    __setitem__ = dict.__setitem__  # type: ignore[assignment]
     clear = dict.clear
     popitem = dict.popitem  # type: ignore[assignment]
     pop = dict.pop  # type: ignore[assignment]
     setdefault = dict.setdefault  # type: ignore[assignment]
 
+    # Methods changed from constantdict
+    set = dict.__setitem__  # type: ignore[assignment]
+    delete = dict.__delitem__  # type: ignore[assignment]
+    update = dict.update  # type: ignore[assignment]
+    discard = dict.pop  # type: ignore[assignment]
+
     def finish(self) -> constantdict[K, V]:
-        """Return an immutable version of this :class:`constantmutabledict`."""
+        """Convert this object to an immutable version of
+        :class:`constantmutabledict`."""
         self.__class__ = constantdict  # type: ignore[assignment]
         return self
