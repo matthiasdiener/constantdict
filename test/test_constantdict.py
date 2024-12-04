@@ -241,6 +241,9 @@ def test_mutation() -> None:
     # Mutation is allowed now
     cdm["a"] = 42
 
+    assert cdm["a"] == 42
+    assert cd["a"] == 1
+
     with pytest.raises(AttributeError):
         # Hashing is disallowed
         hash(cdm)
