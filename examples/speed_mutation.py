@@ -1,7 +1,7 @@
 # Based on https://gist.github.com/1st1/292e3f0bbe43bd65ff3256f80aa2637d
 
 import time
-from typing import Any
+from typing import Any, Dict
 
 import frozendict
 import immutabledict
@@ -21,7 +21,7 @@ for N in [5, 10, 20, 30, 100, 200, 300, 400, 500, 1000]:
 
     cd: constantdict.constantdict[str, Any] = constantdict.constantdict()
     h: immutables.Map[str, Any] = immutables.Map()
-    d: dict[str, Any] = {}
+    d: Dict[str, Any] = {}
     pm: pyrsistent.PMap[str, Any] = pyrsistent.pmap()
     idd: immutabledict.immutabledict[str, Any] = immutabledict.immutabledict()
     fd: frozendict.frozendict[str, Any] = frozendict.frozendict()

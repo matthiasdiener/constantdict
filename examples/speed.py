@@ -70,6 +70,10 @@ for N in (1, 1000):
         else:
             mut_code = "d2 = d.set(1, 1)"
 
-        print("  copy+mutate\t", timeit(f"{mut_code}", number=10000, globals=globals()))
+        try:
+            print("  copy+mutate\t", timeit(f"{mut_code}", number=10000,
+                                            globals=globals()))
+        except AttributeError:
+            print("  copy+mutate\t n/a")
 
         # }}}
