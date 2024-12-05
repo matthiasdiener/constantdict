@@ -220,52 +220,15 @@ class constantdict(Dict[K, V]):  # noqa: N801
     # }}}
 
 
-class constantdictmutation(constantdict[K, V]):  # noqa: N801
+class constantdictmutation(Dict[K, V]):  # noqa: N801
     """A mutable dictionary that can be converted back to a
-    :class:`constantdict` without copying.
+    :class:`constantdict` without copying. This class behaves exactly like a
+    :class:`dict`, except for one additional method mentioned below.
 
-    Additional methods compared to :class:`constantdict`:
+    Additional methods compared to :class:`dict`:
 
     .. automethod:: finish
-
-    Changed methods compared to :class:`constantdict`:
-
-    .. method:: __hash__
-    .. method:: mutate
-
-        These methods are not available in :class:`constantdictmutation`.
-
-    .. method:: __delitem__
-    .. method:: __setitem__
-    .. method:: clear
-    .. method:: popitem
-    .. method:: pop
-    .. method:: setdefault
-    .. method:: update
-
-        These methods modify the dictionary in place and operate in the same
-        way as in :class:`dict`.
     """
-
-    __hash__ = _del_attr  # type: ignore[assignment]
-    mutate = _del_attr  # type: ignore[assignment]
-
-    __delitem__ = dict.__delitem__
-
-    if sys.version_info >= (3, 9):
-        __ior__ = dict.__ior__
-
-    __setitem__ = dict.__setitem__
-    clear = dict.clear
-    popitem = dict.popitem  # type: ignore[assignment]
-    pop = dict.pop  # type: ignore[assignment]
-    setdefault = dict.setdefault  # type: ignore[assignment]
-
-    # Methods changed from constantdict
-    set = dict.__setitem__  # type: ignore[assignment]
-    delete = dict.__delitem__  # type: ignore[assignment]
-    update = dict.update  # type: ignore[assignment]
-    discard = dict.pop  # type: ignore[assignment]
 
     def finish(self) -> constantdict[K, V]:
         """Convert this object to an immutable version of
@@ -280,4 +243,4 @@ class constantdictmutation(constantdict[K, V]):  # noqa: N801
             constantdict({'a': 12, 'b': 2})
         """
         self.__class__ = constantdict  # type: ignore[assignment]
-        return self
+        return self  # type: ignore[return-value]
