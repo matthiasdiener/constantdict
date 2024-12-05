@@ -126,16 +126,18 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
     def set(self, key: K, val: V) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with the item at *key* set to *val*."""
-        return self.__class__({**self, key: val})
+        d = self.mutate()
+        d[key] = val
+        return d.finish()
 
     def delete(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at *key*.
 
         Raise a :exc:`KeyError` if *key* is not present.
         """
-        new = dict(self)
-        del new[key]
-        return self.__class__(new)
+        d = self.mutate()
+        del d[key]
+        return d.finish()
 
     remove = delete
 
@@ -156,7 +158,9 @@ class constantdict(Dict[K, V]):  # noqa: N801
             >>> cd
             constantdict({'a': 1, 'b': 2})
         """
-        return self.__class__({**self, **other})
+        d = self.mutate()
+        d.update(other)
+        return d.finish()
 
     def discard(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at the given key.
