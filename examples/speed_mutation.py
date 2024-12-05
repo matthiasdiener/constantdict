@@ -22,9 +22,9 @@ for N in [5, 10, 20, 30, 100, 200, 300, 400, 500, 1000]:
     cd: constantdict.constantdict[str, Any] = constantdict.constantdict()
     h: immutables.Map[str, Any] = immutables.Map()
     d: Dict[str, Any] = {}
-    pm: pyrsistent.PMap[str, Any] = pyrsistent.pmap()
+    pm: Any = pyrsistent.pmap()
     idd: immutabledict.immutabledict[str, Any] = immutabledict.immutabledict()
-    fd: frozendict.frozendict[str, Any] = frozendict.frozendict()
+    fd: Any = frozendict.frozendict()
 
     for i in range(N):
         cd = cd.set(str(i), i)
