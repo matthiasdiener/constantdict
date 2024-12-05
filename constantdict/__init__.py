@@ -176,7 +176,8 @@ class constantdict(Dict[K, V]):  # noqa: N801
     # {{{ mutation
 
     def mutate(self) -> constantmutabledict[K, V]:
-        """Return a mutable version of this :class:`constantdict`.
+        """Return a mutable copy of this :class:`constantdict` as a
+        :class:`constantmutabledict`.
 
         Run :meth:`constantmutabledict.finish` to convert back to an immutable
         :class:`constantdict`.
@@ -219,12 +220,12 @@ class constantmutabledict(constantdict[K, V]):  # noqa: N801
     __hash__ = _del_attr  # type: ignore[assignment]
     mutate = _del_attr  # type: ignore[assignment]
 
-    __delitem__ = dict.__delitem__  # type: ignore[assignment]
+    __delitem__ = dict.__delitem__
 
     if sys.version_info >= (3, 9):
         __ior__ = dict.__ior__
 
-    __setitem__ = dict.__setitem__  # type: ignore[assignment]
+    __setitem__ = dict.__setitem__
     clear = dict.clear
     popitem = dict.popitem  # type: ignore[assignment]
     pop = dict.pop  # type: ignore[assignment]

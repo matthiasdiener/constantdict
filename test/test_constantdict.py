@@ -239,7 +239,7 @@ def test_mutation() -> None:
     cdm = cd.mutate()
 
     # Mutation is allowed now
-    cdm["a"] = 42  # type: ignore[has-type]
+    cdm["a"] = 42
 
     assert cdm["a"] == 42
     assert cd["a"] == 1
