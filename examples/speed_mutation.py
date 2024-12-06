@@ -26,6 +26,10 @@ for N in [5, 10, 20, 30, 100, 200, 300, 400, 500, 1000]:
     idd: immutabledict.immutabledict[str, Any] = immutabledict.immutabledict()
     fd: Any = frozendict.frozendict()
 
+    if not hasattr(idd, "set"):
+        print("  immutabledict does not have a 'set' method, Skipping...")
+        continue
+
     for i in range(N):
         cd = cd.set(str(i), i)
         h = h.set(str(i), i)
