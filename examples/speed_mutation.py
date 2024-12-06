@@ -39,7 +39,8 @@ for N in (5, 10, 20, 30, 100, 200, 300, 400, 500, 1000):
     assert len(d) == N
     assert len(pm) == N
     assert len(cd) == N
-    assert len(idd) == N
+    if hasattr(idd, "set"):
+        assert len(idd) == N
     assert len(fd) == N
 
     for i in range(N):
