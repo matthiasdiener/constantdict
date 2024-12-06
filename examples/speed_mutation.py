@@ -14,7 +14,7 @@ ITER = 1_000_000
 KEY = "5"
 
 
-for N in [5, 10, 20, 30, 100, 200, 300, 400, 500, 1000]:
+for N in (5, 10, 20, 30, 100, 200, 300, 400, 500, 1000):
     print("=============")
     print(f"  # of items: {N}; iterations: {ITER}")
     print()
@@ -26,16 +26,13 @@ for N in [5, 10, 20, 30, 100, 200, 300, 400, 500, 1000]:
     idd: immutabledict.immutabledict[str, Any] = immutabledict.immutabledict()
     fd: Any = frozendict.frozendict()
 
-    if not hasattr(idd, "set"):
-        print("  immutabledict does not have a 'set' method, Skipping...")
-        continue
-
     for i in range(N):
         cd = cd.set(str(i), i)
         h = h.set(str(i), i)
         pm = pm.set(str(i), i)
         d[str(i)] = i
-        idd = idd.set(str(i), i)
+        if hasattr(idd, "set"):
+            idd = idd.set(str(i), i)
         fd = fd.set(str(i), i)
 
     assert len(h) == N
@@ -112,26 +109,29 @@ for N in [5, 10, 20, 30, 100, 200, 300, 400, 500, 1000]:
     end = time.monotonic() - st
     print(f"  pyrsistent.PMap:\t\t{end:.4f}s")
 
-    st = time.monotonic()
-    for _ in range(ITER):
-        idd.get(KEY)
-        idd.get(KEY)
-        idd.get(KEY)
-        idd.get(KEY)
-        idd.get(KEY)
+    if hasattr(idd, "set"):
+        st = time.monotonic()
+        for _ in range(ITER):
+            idd.get(KEY)
+            idd.get(KEY)
+            idd.get(KEY)
+            idd.get(KEY)
+            idd.get(KEY)
 
-        idd.get(KEY)
-        idd.get(KEY)
-        idd.get(KEY)
-        idd.get(KEY)
-        idd.get(KEY)
+            idd.get(KEY)
+            idd.get(KEY)
+            idd.get(KEY)
+            idd.get(KEY)
+            idd.get(KEY)
 
-        # idd2 = idd.set('aaa', 'aaa')
-        # idd2 = idd.delete('1')
-        idd2 = idd.update({"aaa": "aaa"})
+            # idd2 = idd.set('aaa', 'aaa')
+            # idd2 = idd.delete('1')
+            idd2 = idd.update({"aaa": "aaa"})
 
-    end = time.monotonic() - st
-    print(f"  immutabledict copy:\t\t{end:.4f}s")
+        end = time.monotonic() - st
+        print(f"  immutabledict copy:\t\t{end:.4f}s")
+    else:
+        print("  immutabledict does not have a 'set' method, Skipping...")
 
     st = time.monotonic()
     for _ in range(ITER):
