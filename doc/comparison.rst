@@ -15,11 +15,11 @@ Features
      - ✅ PSF
      - ✅
      - ❌
-   * - `constantdict <https://github.com/matthiasdiener/constantdict>`__
+   * - :class:`~constantdict.constantdict`
      - ✅ MIT
      - ✅
      - ✅
-   * - `immutabledict <https://github.com/corenting/immutabledict>`__
+   * - :class:`~immutabledict.immutabledict`
      - ✅ MIT
      - ✅
      - ✅
@@ -31,8 +31,7 @@ Features
      - ❌ LGPL-3.0
      - ✅
      - ✅
-
-   * - `pyrsistent.PMap <https://github.com/tobgu/pyrsistent>`__
+   * - :class:`pyrsistent.PMap`
      - ✅ MIT
      - ❌
      - ✅

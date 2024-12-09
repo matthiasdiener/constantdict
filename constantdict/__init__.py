@@ -207,9 +207,10 @@ class constantdict(Dict[K, V]):  # noqa: N801
             >>> cd = constantdict(a=1, b=2)
             >>> cd_mut = cd.mutate()
             >>> cd_mut["a"] = 10
+            >>> del cd_mut["b"]
             >>> cd_new = cd_mut.finish()
             >>> cd_new
-            constantdict({'a': 10, 'b': 2})
+            constantdict({'a': 10})
             >>> cd
             constantdict({'a': 1, 'b': 2})
         """
@@ -225,7 +226,7 @@ class constantdictmutation(Dict[K, V]):  # noqa: N801
     :class:`constantdict` without copying. This class behaves exactly like a
     :class:`dict`, except for one additional method mentioned below.
 
-    Additional methods compared to :class:`dict`:
+    Additional method compared to :class:`dict`:
 
     .. automethod:: finish
     """

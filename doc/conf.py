@@ -16,4 +16,5 @@ release = __version__
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "pyrsistent": ("https://pyrsistent.readthedocs.io/en/latest/", None),
+    "immutabledict": ("https://corenting.github.io/immutabledict", None),
 }
