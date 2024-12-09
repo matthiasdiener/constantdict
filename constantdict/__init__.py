@@ -37,7 +37,7 @@ __version__ = importlib_metadata.version(__package__ or __name__)
 
 
 import sys
-from typing import Any, Dict, TypeVar  # <3.9 needs Dict, not dict
+from typing import Any, Dict, Iterable, TypeVar  # <3.9 needs Dict, not dict
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -76,12 +76,13 @@ class constantdict(Dict[K, V]):  # noqa: N801
     .. method:: setdefault
     """
 
-    @classmethod
-    def fromkeys(cls: type[dict[K, V]], *args: Any,
-                 **kwargs: Any) -> Any:
+    @staticmethod
+    def fromkeys(iterable: Iterable[K], value: Any = None, /) -> Any:  # type: ignore[override]
         """Create a new :class:`constantdict` from supplied keys and values."""
-        # dict.fromkeys calls __setitem__, hence need to convert from a 'dict'
-        return cls(dict.fromkeys(*args, **kwargs))
+        # dict.fromkeys calls __setitem__, hence can't use that directly
+        d = constantdictmutation.fromkeys(iterable, value)
+        d.__class__ = constantdict
+        return d
 
     def __hash__(self) -> int:  # type: ignore[override]
         """Return a hash of this :class:`constantdict`. This

@@ -25,6 +25,11 @@ def test_fromkeys() -> None:
     cd: constantdict[str, None] = constantdict.fromkeys(["a", "b", "c"])
     assert cd == {"a": None, "b": None, "c": None}
     assert cd == dict.fromkeys(["a", "b", "c"])
+    assert isinstance(cd, constantdict)
+
+    cd2: constantdict[str, int] = constantdict.fromkeys(["a", "b", "c"], 42)
+    assert cd2 == dict.fromkeys(["a", "b", "c"], 42)
+    assert isinstance(cd, constantdict)
 
 
 def test_set_delete_remove_update() -> None:
