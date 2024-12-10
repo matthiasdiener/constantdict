@@ -25,6 +25,11 @@ def test_fromkeys() -> None:
     cd: constantdict[str, None] = constantdict.fromkeys(["a", "b", "c"])
     assert cd == {"a": None, "b": None, "c": None}
     assert cd == dict.fromkeys(["a", "b", "c"])
+    assert isinstance(cd, constantdict)
+
+    cd2: constantdict[str, int] = constantdict.fromkeys(["a", "b", "c"], 42)
+    assert cd2 == dict.fromkeys(["a", "b", "c"], 42)
+    assert isinstance(cd, constantdict)
 
 
 def test_set_delete_remove_update() -> None:
@@ -225,3 +230,45 @@ def test_setdefault() -> None:
         cd.setdefault("a", 10)  # type: ignore[has-type]
 
 # }}}
+
+
+def test_mutation() -> None:
+    cd = constantdict(a=1, b=2)
+    cd2 = constantdict(a=1, b=2)
+
+    with pytest.raises(AttributeError):
+        cd["a"] = 42
+
+    hash(cd)
+
+    cdm = cd.mutate()
+
+    # Mutation is allowed now
+    cdm["a"] = 42
+
+    assert cdm["a"] == 42
+    assert cd["a"] == 1
+
+    with pytest.raises(TypeError):
+        # Hashing is disallowed
+        hash(cdm)
+
+    hash(cd)
+
+    assert cdm == {"a": 42, "b": 2}
+
+    with pytest.raises(AttributeError):
+        # mutate() must not affect other instances of the same class
+        cd2["a"] = 43
+
+    cdmm = cdm.finish()
+
+    # Hashing is allowed again
+    hash(cdmm)
+
+    assert cdmm == {"a": 42, "b": 2}
+
+    with pytest.raises(AttributeError):
+        cd["a"] = 43
+
+    assert cd == {"a": 1, "b": 2}
