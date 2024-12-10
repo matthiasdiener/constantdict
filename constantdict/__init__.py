@@ -61,6 +61,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     Methods that return a modified copy of the :class:`constantdict`:
 
     .. automethod:: set
+    .. automethod:: setdefault
     .. automethod:: delete
     .. automethod:: update
     .. automethod:: discard
@@ -73,7 +74,6 @@ class constantdict(Dict[K, V]):  # noqa: N801
     .. method:: clear
     .. method:: popitem
     .. method:: pop
-    .. method:: setdefault
     """
 
     @staticmethod
@@ -131,6 +131,21 @@ class constantdict(Dict[K, V]):  # noqa: N801
         d[key] = val
         return d.finish()
 
+    def setdefault(self, key: K, default: Any = None) -> constantdict[K, V]:  # type: ignore[override]
+        """Return a new :class:`constantdict` with the item at *key* set to
+        *default* if *key* is not in the dictionary.
+
+        Return a reference to itself if *key* is present.
+
+        .. note::
+
+                Based on the frozendict API.
+        """
+        if key in self:
+            return self
+
+        return self.set(key, default)
+
     def delete(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at *key*.
 
@@ -186,7 +201,6 @@ class constantdict(Dict[K, V]):  # noqa: N801
     clear = _del_attr
     popitem = _del_attr  # type: ignore[assignment]
     pop = _del_attr  # type: ignore[assignment]
-    setdefault = _del_attr  # type: ignore[assignment]
 
     # }}}
 
