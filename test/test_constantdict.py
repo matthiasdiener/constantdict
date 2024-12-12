@@ -64,6 +64,18 @@ def test_set_delete_remove_update() -> None:
     assert isinstance(cd, constantdict)
 
 
+def test_setdefault() -> None:
+    cd: constantdict[str, int] = constantdict()
+
+    cd2 = cd.setdefault("a", 10).setdefault("b", 20)
+    assert cd2 == {"a": 10, "b": 20}
+    assert isinstance(cd2, constantdict)
+
+    cd3 = cd2.setdefault("a", 30)
+    assert cd3 == {"a": 10, "b": 20}
+    assert cd3 is cd2
+
+
 def test_reversed() -> None:
     if sys.version_info < (3, 8):
         pytest.skip("Python 3.7 does not support reversed() on dict objects")
@@ -221,13 +233,6 @@ def test_pop() -> None:
 
     with pytest.raises(AttributeError):
         cd.pop("a")  # type: ignore[has-type]
-
-
-def test_setdefault() -> None:
-    cd: constantdict[str, int] = constantdict()
-
-    with pytest.raises(AttributeError):
-        cd.setdefault("a", 10)  # type: ignore[has-type]
 
 # }}}
 
