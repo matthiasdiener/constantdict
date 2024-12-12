@@ -247,8 +247,7 @@ class constantdictmutation(Dict[K, V]):  # noqa: N801
     """
 
     def finish(self) -> constantdict[K, V]:
-        """Convert this object to an immutable version of
-        :class:`constantdict`.
+        """Convert this object to an immutable version of itself.
 
         .. doctest::
 
@@ -296,8 +295,6 @@ class constantdictuncachedhashmutation(constantdictmutation[K, V]):  # noqa: N80
     """
 
     def finish(self) -> constantdictuncachedhash[K, V]:
-        """Convert this object to an immutable version of
-        :class:`constantdictuncachedhash`.
-        """
+        """Convert this object to an immutable version of itself."""
         self.__class__ = constantdictuncachedhash  # type: ignore[assignment]
         return self  # type: ignore[return-value]
