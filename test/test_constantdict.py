@@ -292,6 +292,8 @@ def test_mutation() -> None:
 def test_uncached_hash() -> None:
     cduh = constantdictuncachedhash(a=1, b=2)
     cd = constantdict(a=1, b=2)
+
+    assert cduh == cd
     assert hash(cd) == hash(cduh)
     assert hasattr(cd, "_hash")
     assert not hasattr(cduh, "_hash")
@@ -302,6 +304,7 @@ def test_uncached_hash() -> None:
     assert isinstance(cdm, constantdictuncachedhashmutation)
 
     cdmm = cdm.finish()
+
     assert hash(cdmm) != hash(cduh)
     assert isinstance(cdmm, constantdictuncachedhash)
     assert not hasattr(cdmm, "_hash")
