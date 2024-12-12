@@ -248,7 +248,7 @@ class constantdictmutation(Dict[K, V]):  # noqa: N801
 
     def finish(self) -> constantdict[K, V]:
         """Convert this object to an immutable version of
-        :class:`constantdictmutation`.
+        :class:`constantdict`.
 
         .. doctest::
 
@@ -259,4 +259,45 @@ class constantdictmutation(Dict[K, V]):  # noqa: N801
             constantdict({'a': 12, 'b': 2})
         """
         self.__class__ = constantdict  # type: ignore[assignment]
+        return self  # type: ignore[return-value]
+
+
+class constantdictuncachedhash(constantdict[K, V]):  # noqa: N801
+    """A :class:`constantdict` that does not cache its hash
+    value. This is useful when the dictionary contains items that are not
+    immutable and whose hash value might therefore change.
+
+    .. automethod:: mutate
+    """
+
+    def __hash__(self) -> int:  # type: ignore[override]
+        # Same "algorithm" as in constantdict
+        return hash(frozenset(self.items()))
+
+    def mutate(self) -> constantdictuncachedhashmutation[K, V]:
+        """Return a mutable copy of this :class:`constantdict` as a
+        :class:`constantdictuncachedhashmutation`.
+
+        Run :meth:`constantdictuncachedhashmutation.finish` to convert back to an
+        immutable :class:`constantdict`.
+        """
+        return constantdictuncachedhashmutation(self)
+
+
+class constantdictuncachedhashmutation(constantdictmutation[K, V]):  # noqa: N801
+    """A mutable dictionary that can be converted back to a
+    :class:`constantdictuncachedhash` without copying. This class behaves
+    exactly like a :class:`dict`, except for one additional method mentioned
+    below.
+
+    Additional method compared to :class:`dict`:
+
+    .. automethod:: finish
+    """
+
+    def finish(self) -> constantdictuncachedhash[K, V]:
+        """Convert this object to an immutable version of
+        :class:`constantdictuncachedhash`.
+        """
+        self.__class__ = constantdictuncachedhash  # type: ignore[assignment]
         return self  # type: ignore[return-value]
