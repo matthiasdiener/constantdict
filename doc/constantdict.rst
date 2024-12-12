@@ -5,9 +5,18 @@ constantdict
 
 .. autoclass:: constantdict.constantdictmutation
 
+.. autoclass:: constantdict.constantdictuncachedhash
 
-Internal stuff that is only here because the documentation tool wants it
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autoclass:: constantdict.constantdictuncachedhashmutation
+
+
+Type classes
+^^^^^^^^^^^^
 
 .. class:: constantdict.K
+
+    A type representing a key in a :class:`~constantdict.constantdict`. Must be hashable.
+
 .. class:: constantdict.V
+
+    A type representing a value in a :class:`~constantdict.constantdict`.

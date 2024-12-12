@@ -2,7 +2,11 @@ import sys
 
 import pytest
 
-from constantdict import constantdict
+from constantdict import (
+    constantdict,
+    constantdictuncachedhash,
+    constantdictuncachedhashmutation,
+)
 
 
 def test_basic() -> None:
@@ -244,7 +248,9 @@ def test_mutation() -> None:
     with pytest.raises(AttributeError):
         cd["a"] = 42
 
-    hash(cd)
+    assert not hasattr(cd, "_hash")
+    h1 = hash(cd)
+    assert hasattr(cd, "_hash")
 
     cdm = cd.mutate()
 
@@ -258,7 +264,7 @@ def test_mutation() -> None:
         # Hashing is disallowed
         hash(cdm)
 
-    hash(cd)
+    assert not hasattr(cdm, "_hash")
 
     assert cdm == {"a": 42, "b": 2}
 
@@ -269,11 +275,36 @@ def test_mutation() -> None:
     cdmm = cdm.finish()
 
     # Hashing is allowed again
-    hash(cdmm)
+    assert not hasattr(cdmm, "_hash")
+    h2 = hash(cdmm)
 
     assert cdmm == {"a": 42, "b": 2}
+
+    # Hashes must be different
+    assert h1 != h2
 
     with pytest.raises(AttributeError):
         cd["a"] = 43
 
     assert cd == {"a": 1, "b": 2}
+
+
+def test_uncached_hash() -> None:
+    cduh = constantdictuncachedhash(a=1, b=2)
+    cd = constantdict(a=1, b=2)
+
+    assert cduh == cd
+    assert hash(cd) == hash(cduh)
+    assert hasattr(cd, "_hash")
+    assert not hasattr(cduh, "_hash")
+
+    cdm = cduh.mutate()
+    cdm["a"] = 42
+
+    assert isinstance(cdm, constantdictuncachedhashmutation)
+
+    cdmm = cdm.finish()
+
+    assert hash(cdmm) != hash(cduh)
+    assert isinstance(cdmm, constantdictuncachedhash)
+    assert not hasattr(cdmm, "_hash")
