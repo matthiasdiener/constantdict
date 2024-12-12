@@ -226,7 +226,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
             >>> cd_new = cd_mut.finish()
             >>> cd_new
             constantdict({'a': 10})
-            >>> cd
+            >>> cd  # unchanged
             constantdict({'a': 1, 'b': 2})
         """
         # This needs to make a copy since the original dictionary must
