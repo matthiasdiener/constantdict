@@ -37,7 +37,7 @@ __version__ = importlib_metadata.version(__package__ or __name__)
 
 
 import sys
-from typing import Any, Dict, TypeVar  # <3.9 needs Dict, not dict
+from typing import Any, Dict, Iterable, TypeVar  # <3.9 needs Dict, not dict
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -56,6 +56,7 @@ class constantdict(Dict[K, V]):  # noqa: N801
     Additional methods compared to :class:`dict`:
 
     .. automethod:: __hash__
+    .. automethod:: mutate
 
     Methods that return a modified copy of the :class:`constantdict`:
 
@@ -75,12 +76,13 @@ class constantdict(Dict[K, V]):  # noqa: N801
     .. method:: setdefault
     """
 
-    @classmethod
-    def fromkeys(cls: type[dict[K, V]], *args: Any,
-                 **kwargs: Any) -> Any:
+    @staticmethod
+    def fromkeys(iterable: Iterable[K], value: Any = None) -> Any:  # type: ignore[override]
         """Create a new :class:`constantdict` from supplied keys and values."""
-        # dict.fromkeys calls __setitem__, hence need to convert from a 'dict'
-        return cls(dict.fromkeys(*args, **kwargs))
+        # dict.fromkeys calls __setitem__, hence can't use that directly
+        d = constantdictmutation.fromkeys(iterable, value)
+        d.__class__ = constantdict
+        return d
 
     def __hash__(self) -> int:  # type: ignore[override]
         """Return a hash of this :class:`constantdict`. This
@@ -113,7 +115,8 @@ class constantdict(Dict[K, V]):  # noqa: N801
                 return NotImplemented
             return self.update(other)
 
-        # Like frozenset.__ior__, constantdict.__ior__ must return a new instance
+        # Like frozenset.__ior__, constantdict.__ior__ must return a new instance,
+        # i.e., augmented assignment instead of in-place modification.
         __ior__ = __or__  # type: ignore[assignment]
 
     def copy(self) -> dict[K, V]:
@@ -124,16 +127,18 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
     def set(self, key: K, val: V) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with the item at *key* set to *val*."""
-        return self.__class__({**self, key: val})
+        d = self.mutate()
+        d[key] = val
+        return d.finish()
 
     def delete(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at *key*.
 
         Raise a :exc:`KeyError` if *key* is not present.
         """
-        new = dict(self)
-        del new[key]
-        return self.__class__(new)
+        d = self.mutate()
+        del d[key]
+        return d.finish()
 
     remove = delete
 
@@ -144,15 +149,29 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
             In contrast to :meth:`dict.update`, this method does not modify the
             original :class:`constantdict`, but creates a new, updated copy.
+
+        .. doctest::
+
+            >>> cd = constantdict(a=1, b=2)
+            >>> cd_new = cd.update({"a": 10, "c": 3})
+            >>> cd_new
+            constantdict({'a': 10, 'b': 2, 'c': 3})
+            >>> cd
+            constantdict({'a': 1, 'b': 2})
         """
-        return self.__class__({**self, **other})
+        d = self.mutate()
+        d.update(other)
+        return d.finish()
 
     def discard(self, key: K) -> constantdict[K, V]:
         """Return a new :class:`constantdict` without the item at the given key.
 
         Return a reference to itself if the key is not present.
+
+        .. note::
+
+            Based on the :class:`pyrsistent.PMap` API.
         """
-        # Based on the pyrsistent.PMap API
         if key not in self:
             return self
 
@@ -170,3 +189,60 @@ class constantdict(Dict[K, V]):  # noqa: N801
     setdefault = _del_attr  # type: ignore[assignment]
 
     # }}}
+
+    # {{{ mutation
+
+    def mutate(self) -> constantdictmutation[K, V]:
+        """Return a mutable copy of this :class:`constantdict` as a
+        :class:`constantdictmutation`.
+
+        Run :meth:`constantdictmutation.finish` to convert back to an immutable
+        :class:`constantdict`.
+
+        .. note::
+
+            Based on the `immutables.Map API <https://github.com/MagicStack/immutables>`__.
+
+        .. doctest::
+
+            >>> cd = constantdict(a=1, b=2)
+            >>> cd_mut = cd.mutate()
+            >>> cd_mut["a"] = 10
+            >>> del cd_mut["b"]
+            >>> cd_new = cd_mut.finish()
+            >>> cd_new
+            constantdict({'a': 10})
+            >>> cd  # unchanged
+            constantdict({'a': 1, 'b': 2})
+        """
+        # This needs to make a copy since the original dictionary must
+        # not be modified.
+        return constantdictmutation(self)
+
+    # }}}
+
+
+class constantdictmutation(Dict[K, V]):  # noqa: N801
+    """A mutable dictionary that can be converted back to a
+    :class:`constantdict` without copying. This class behaves exactly like a
+    :class:`dict`, except for one additional method mentioned below.
+
+    Additional method compared to :class:`dict`:
+
+    .. automethod:: finish
+    """
+
+    def finish(self) -> constantdict[K, V]:
+        """Convert this object to an immutable version of
+        :class:`constantdictmutation`.
+
+        .. doctest::
+
+            >>> cd_mut = constantdict(a=1, b=2).mutate()
+            >>> cd_mut["a"] = 12
+            >>> cd = cd_mut.finish()
+            >>> cd
+            constantdict({'a': 12, 'b': 2})
+        """
+        self.__class__ = constantdict  # type: ignore[assignment]
+        return self  # type: ignore[return-value]
