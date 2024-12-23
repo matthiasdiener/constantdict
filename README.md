@@ -34,7 +34,7 @@ except AttributeError:
     pass
 
 # Some methods return a mutated copy of a constantdict
-cd_new = cd.setdefault(10,5)
+cd_new = cd.setdefault(10, 5)
 assert cd_new == {1: 2, 10: 5}
 # Similar for set(), update(), delete(), discard()
 
