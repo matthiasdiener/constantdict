@@ -37,7 +37,8 @@ __version__ = importlib_metadata.version(__package__ or __name__)
 
 
 import sys
-from typing import Any, Dict, Iterable, TypeVar  # <3.9 needs Dict, not dict
+from collections.abc import Iterable
+from typing import Any, Dict, TypeVar  # <3.9 needs Dict, not dict
 
 K = TypeVar("K")
 V = TypeVar("V")
