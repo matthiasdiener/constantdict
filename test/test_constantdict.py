@@ -308,3 +308,20 @@ def test_uncached_hash() -> None:
     assert hash(cdmm) != hash(cduh)
     assert isinstance(cdmm, constantdictuncachedhash)
     assert not hasattr(cdmm, "_hash")
+
+
+def test_value_covariant() -> None:
+    # This test is actually performed by mypy
+    foo: constantdict[str, str] = constantdict(a="b")
+
+    # Make sure the value type is covariant, otherwise mypy complains
+    _bar1: constantdict[str, str | int] = foo
+
+    # _bar2 is incompatible with foo, mypy complains
+    _bar2: constantdict[str, int] = foo  # type: ignore[assignment]
+
+    # Make sure fromkeys types are correct
+    _bar3: constantdict[str, int] = constantdict.fromkeys(["a", "b"], 42)
+    _bar4: constantdict[str, str | int] = constantdict.fromkeys(["a", "b"], 42)
+    _bar5: constantdict[str, None] = constantdict.fromkeys(["a", "b"])
+    _bar6: constantdict[str, str | None] = constantdict.fromkeys(["a", "b"])
