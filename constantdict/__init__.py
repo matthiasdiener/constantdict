@@ -38,10 +38,10 @@ __version__ = importlib_metadata.version(__package__ or __name__)
 
 import sys
 from collections.abc import Iterable
-from typing import Any, Dict, TypeVar  # <3.9 needs Dict, not dict
+from typing import Any, Dict, Hashable, TypeVar  # <3.9 needs Dict, not dict
 
-K = TypeVar("K")
-V = TypeVar("V")
+K = TypeVar("K", bound=Hashable)
+V = TypeVar("V", covariant=True)
 
 
 def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
@@ -49,7 +49,8 @@ def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
     raise AttributeError("object is immutable")
 
 
-class constantdict(Dict[K, V]):  # noqa: N801
+# type-ignore-reason: covariant type incompatible with Dict
+class constantdict(Dict[K, V]):  # type: ignore[type-var]  # noqa: N801
     """An immutable dictionary that does not allow modifications after
     creation. This class behaves mostly like a :class:`dict`,
     but with the following differences.
@@ -78,12 +79,13 @@ class constantdict(Dict[K, V]):  # noqa: N801
     """
 
     @staticmethod
-    def fromkeys(iterable: Iterable[K], value: Any = None) -> Any:  # type: ignore[override]
+    def fromkeys(iterable: Iterable[K],  # type: ignore[override]
+                 value: V | None = None, /) -> constantdict[K, Any]:
         """Create a new :class:`constantdict` from supplied keys and values."""
         # dict.fromkeys calls __setitem__, hence can't use that directly
         d = constantdictmutation.fromkeys(iterable, value)
         d.__class__ = constantdict
-        return d
+        return d  # type: ignore[return-value]
 
     def __hash__(self) -> int:  # type: ignore[override]
         """Return a hash of this :class:`constantdict`. This
@@ -126,13 +128,14 @@ class constantdict(Dict[K, V]):  # noqa: N801
 
     # {{{ methods that return a modified copy of the dictionary
 
-    def set(self, key: K, val: V) -> constantdict[K, V]:
+    # value: Any due to https://github.com/python/mypy/issues/7049
+    def set(self, key: K, value: Any) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with the item at *key* set to *val*."""
         d = self.mutate()
-        d[key] = val
+        d[key] = value
         return d.finish()
 
-    def setdefault(self, key: K, default: Any = None) -> constantdict[K, V]:  # type: ignore[override]
+    def setdefault(self, key: K, default: V | None = None) -> constantdict[K, V]:  # type: ignore[override]
         """Return a new :class:`constantdict` with the item at *key* set to
         *default* if *key* is not in the dictionary.
 
@@ -237,7 +240,8 @@ class constantdict(Dict[K, V]):  # noqa: N801
     # }}}
 
 
-class constantdictmutation(Dict[K, V]):  # noqa: N801
+# type-ignore-reason: covariant type incompatible with Dict
+class constantdictmutation(Dict[K, V]):  # type: ignore[type-var] # noqa: N801
     """A mutable dictionary that can be converted back to a
     :class:`constantdict` without copying. This class behaves exactly like a
     :class:`dict`, except for one additional method mentioned below.

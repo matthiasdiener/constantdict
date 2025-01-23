@@ -308,3 +308,10 @@ def test_uncached_hash() -> None:
     assert hash(cdmm) != hash(cduh)
     assert isinstance(cdmm, constantdictuncachedhash)
     assert not hasattr(cdmm, "_hash")
+
+
+def test_value_covariant() -> None:
+    foo: constantdict[str, str] = constantdict(a="b")
+
+    # Make sure the value type is covariant (checked by mypy)
+    _bar: constantdict[str, str | int] = foo
