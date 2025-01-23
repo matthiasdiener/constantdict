@@ -50,7 +50,7 @@ def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
 
 
 # type-ignore-reason: covariant type incompatible with Dict
-class constantdict(Dict[K, V]):  # type: ignore[type-var]  # noqa: N801
+class constantdict(Dict[K, V]):  # type: ignore[type-var]
     """An immutable dictionary that does not allow modifications after
     creation. This class behaves mostly like a :class:`dict`,
     but with the following differences.
@@ -241,7 +241,7 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]  # noqa: N801
 
 
 # type-ignore-reason: covariant type incompatible with Dict
-class constantdictmutation(Dict[K, V]):  # type: ignore[type-var] # noqa: N801
+class constantdictmutation(Dict[K, V]):  # type: ignore[type-var]
     """A mutable dictionary that can be converted back to a
     :class:`constantdict` without copying. This class behaves exactly like a
     :class:`dict`, except for one additional method mentioned below.
@@ -266,7 +266,7 @@ class constantdictmutation(Dict[K, V]):  # type: ignore[type-var] # noqa: N801
         return self  # type: ignore[return-value]
 
 
-class constantdictuncachedhash(constantdict[K, V]):  # noqa: N801
+class constantdictuncachedhash(constantdict[K, V]):
     """A :class:`constantdict` that does not cache its hash
     value. This is useful when the dictionary contains items that are not
     immutable and whose hash value might therefore change.
@@ -288,7 +288,7 @@ class constantdictuncachedhash(constantdict[K, V]):  # noqa: N801
         return constantdictuncachedhashmutation(self)
 
 
-class constantdictuncachedhashmutation(constantdictmutation[K, V]):  # noqa: N801
+class constantdictuncachedhashmutation(constantdictmutation[K, V]):
     """A mutable dictionary that can be converted back to a
     :class:`constantdictuncachedhash` without copying. This class behaves
     exactly like a :class:`dict`, except for one additional method mentioned

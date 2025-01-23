@@ -45,6 +45,10 @@ extend-select = [
     "W",   # pycodestyle
 ]
 
+extend-ignore = [
+  "N801",
+]
+
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
 inline-quotes = "double"
