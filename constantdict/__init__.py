@@ -80,7 +80,7 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]  # noqa: N801
 
     @staticmethod
     def fromkeys(iterable: Iterable[K],  # type: ignore[override]
-                 value: V | None = None, /) -> constantdict[K, Any]:
+                 value: V | None = None) -> constantdict[K, V | Any]:
         """Create a new :class:`constantdict` from supplied keys and values."""
         # dict.fromkeys calls __setitem__, hence can't use that directly
         d = constantdictmutation.fromkeys(iterable, value)
