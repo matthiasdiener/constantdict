@@ -101,3 +101,39 @@ jobs:
         python -m pip install frozendict immutables immutabledict pyrsistent
         cd examples
         for f in *.py; do echo Running $f; python $f; done
+
+  downstream_tests:
+    strategy:
+      matrix:
+          downstream_project: [loopy]
+    name: Tests for downstream project ${{ matrix.downstream_project }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
+    - name: "Main Script"
+      env:
+        DOWNSTREAM_PROJECT: ${{ matrix.downstream_project }}
+      run: |
+        set -x
+
+        # [[ $(uname) == Linux ]] && sudo apt-get update && sudo apt-get install -y openmpi-bin libopenmpi-dev libegl1 graphviz
+        # [[ $(uname) == Darwin ]] && brew install openmpi graphviz
+
+        cd ..
+
+        git clone https://github.com/inducer/$DOWNSTREAM_PROJECT
+        cd loopy
+        pip install -e . -v
+
+        cd ../constantdict
+        pip install -e .  # install constantdict
+
+        cd ../$DOWNSTREAM_PROJECT
+
+        pip install pytest siphash24 pyopencl
+
+        python -m pytest --tb=native -rxsw -v .
