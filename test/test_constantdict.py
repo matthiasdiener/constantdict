@@ -288,6 +288,9 @@ def test_mutation() -> None:
 
     assert cd == {"a": 1, "b": 2}
 
+    with cd.mutate() as cdm:
+        cdm["a"] = 42
+
 
 def test_uncached_hash() -> None:
     cduh = constantdictuncachedhash(a=1, b=2)

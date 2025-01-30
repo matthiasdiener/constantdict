@@ -38,7 +38,7 @@ __version__ = importlib_metadata.version(__package__ or __name__)
 
 import sys
 from collections.abc import Iterable
-from typing import Any, Dict, Hashable, TypeVar  # <3.9 needs Dict, not dict
+from typing import Any, Dict, Hashable, Literal, TypeVar  # <3.9 needs Dict, not dict
 
 K = TypeVar("K", bound=Hashable)
 V = TypeVar("V", covariant=True)
@@ -244,12 +244,29 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 class constantdictmutation(Dict[K, V]):  # type: ignore[type-var]
     """A mutable dictionary that can be converted back to a
     :class:`constantdict` without copying. This class behaves exactly like a
-    :class:`dict`, except for one additional method mentioned below.
+    :class:`dict`, except for the additions mentioned below.
 
     Additional method compared to :class:`dict`:
 
     .. automethod:: finish
+
+    It can also be used as a context manager:
+
+    .. doctest::
+
+        >>> with constantdict(a=1, b=2).mutate() as cd_mut:
+        ...     cd_mut["a"] = 10
+        ...     del cd_mut["b"]
+        ...     cd_new = cd_mut.finish()
+        >>> cd_new
+        constantdict({'a': 10})
     """
+
+    def __enter__(self) -> constantdictmutation[K, V]:
+        return self
+
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> Literal[False]:
+        return False
 
     def finish(self) -> constantdict[K, V]:
         """Convert this object to an immutable version of itself.
