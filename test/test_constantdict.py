@@ -327,7 +327,7 @@ def test_value_covariant() -> None:
     _bar6: constantdict[str, str | None] = constantdict.fromkeys(["a", "b"])
 
 
-@pytest.mark.xfail(reason="types do not differentiate from dict (see #35)")
+@pytest.mark.xfail(reason="types do not differentiate from dict (see #35)", strict=True)
 def test_type_dict() -> None:
     from collections.abc import Mapping as abc_Mapping
     from collections.abc import MutableMapping as abc_MutableMapping
@@ -344,7 +344,8 @@ def test_type_dict() -> None:
     assert not isinstance(cd, abc_MutableMapping)
 
 
-@pytest.mark.xfail(reason="subclasses do not differentiate from dict (see #35)")
+@pytest.mark.xfail(
+        reason="subclasses do not differentiate from dict (see #35)", strict=True)
 def test_subclass_dict() -> None:
     from collections.abc import Mapping as abc_Mapping
     from collections.abc import MutableMapping as abc_MutableMapping
