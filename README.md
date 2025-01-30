@@ -66,6 +66,10 @@ as well as the examples in the `examples/` directory.
 - [PEP 416](https://www.python.org/dev/peps/pep-0416/)
 - [PEP 603](https://www.python.org/dev/peps/pep-0603/)
 
+### Discussions
+
+- [PEP 603: Adding a frozenmap type to collections](https://discuss.python.org/t/pep-603-adding-a-frozenmap-type-to-collections/2318)
+
 ## License
 
 MIT License.
