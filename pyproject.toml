@@ -10,7 +10,8 @@ authors = [
 ]
 description = "An immutable dict class."
 dependencies = [
-    "importlib_metadata;python_version<'3.8'"
+    "importlib_metadata;python_version<'3.8'",
+    "typing_extensions;python_version<'3.8'"
 ]
 readme = "README.md"
 license = { file="LICENSE" }

@@ -27,18 +27,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-try:
+import sys
+from collections.abc import Iterable
+from typing import Any, Dict, Hashable, TypeVar  # <3.9 needs Dict, not dict
+
+if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:  # pragma: no cover
-    # Python 3.7
+    from typing import Literal
+else:  # pragma: no cover
     import importlib_metadata  # type: ignore[no-redef]
+    from typing_extensions import Literal
+
 
 __version__ = importlib_metadata.version(__package__ or __name__)
 
-
-import sys
-from collections.abc import Iterable
-from typing import Any, Dict, Hashable, Literal, TypeVar  # <3.9 needs Dict, not dict
 
 K = TypeVar("K", bound=Hashable)
 V = TypeVar("V", covariant=True)
