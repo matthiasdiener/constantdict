@@ -4,13 +4,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "constantdict"
-version = "2025.1"
+version = "2025.1.1"
 authors = [
   { name="Matthias Diener", email="matthias.diener@gmail.com" },
 ]
 description = "An immutable dict class."
 dependencies = [
-    "importlib_metadata;python_version<'3.8'"
+    "importlib_metadata;python_version<'3.8'",
+    "typing_extensions;python_version<'3.8'"
 ]
 readme = "README.md"
 license = { file="LICENSE" }
@@ -23,8 +24,9 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/matthiasdiener/constantdict/"
-"Bug Tracker" = "https://github.com/matthiasdiener/constantdict/issues"
+Homepage = "https://github.com/matthiasdiener/constantdict"
+Documentation = "https://matthiasdiener.github.io/constantdict"
+Issues = "https://github.com/matthiasdiener/constantdict/issues"
 
 [tool.ruff]
 preview = true
@@ -46,7 +48,7 @@ extend-select = [
 ]
 
 extend-ignore = [
-  "N801",
+  "N801",  # Class name should use CapWords convention
 ]
 
 [tool.ruff.lint.flake8-quotes]
