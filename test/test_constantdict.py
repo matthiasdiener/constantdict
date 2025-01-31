@@ -290,6 +290,10 @@ def test_mutation() -> None:
 
     with cd.mutate() as cdm:
         cdm["a"] = 42
+        del cdm["b"]
+        cd_new = cdm.finish()
+
+    assert cd_new == {"a": 42}
 
 
 def test_uncached_hash() -> None:
