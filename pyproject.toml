@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "constantdict"
-version = "2025.1"
+version = "2025.1.1"
 authors = [
   { name="Matthias Diener", email="matthias.diener@gmail.com" },
 ]
@@ -47,7 +47,7 @@ extend-select = [
 ]
 
 extend-ignore = [
-  "N801",
+  "N801",  # Class name should use CapWords convention
 ]
 
 [tool.ruff.lint.flake8-quotes]
