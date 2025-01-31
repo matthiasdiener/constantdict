@@ -293,6 +293,7 @@ def test_mutation() -> None:
         del cdm["b"]
         cd_new = cdm.finish()
 
+    assert cd == {"a": 1, "b": 2}
     assert cd_new == {"a": 42}
 
 
