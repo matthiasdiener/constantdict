@@ -1,5 +1,5 @@
-Comparison of ``dict`` implementations
-======================================
+Comparison of dictionary implementations
+========================================
 
 Features
 --------

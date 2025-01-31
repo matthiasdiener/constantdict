@@ -17,8 +17,8 @@ Some additional methods compared to :class:`dict` are provided, see the API
 reference below.
 
 
-API reference
--------------
+Contents
+--------
 
 .. toctree::
    :maxdepth: 1
