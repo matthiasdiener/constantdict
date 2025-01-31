@@ -1,5 +1,5 @@
-constantdict
-============
+constantdict API reference
+==========================
 
 .. autoclass:: constantdict.constantdict
 
