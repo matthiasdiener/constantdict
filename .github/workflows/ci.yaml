@@ -118,22 +118,11 @@ jobs:
       env:
         DOWNSTREAM_PROJECT: ${{ matrix.downstream_project }}
       run: |
-        set -x
+        curl -L -O https://tiker.net/ci-support-v0
 
-        # [[ $(uname) == Linux ]] && sudo apt-get update && sudo apt-get install -y openmpi-bin libopenmpi-dev libegl1 graphviz
-        # [[ $(uname) == Darwin ]] && brew install openmpi graphviz
+        # Override constantdict with the local version
+        sed -i 's|  edit_requirements_txt_for_downstream_in_subdir||' ci-support-v0
+        export EXTRA_INSTALL="$PWD"
 
-        cd ..
-
-        git clone https://github.com/inducer/$DOWNSTREAM_PROJECT
-        cd loopy
-        pip install -e . -v
-
-        cd ../constantdict
-        pip install -e .  # install constantdict
-
-        cd ../$DOWNSTREAM_PROJECT
-
-        pip install pytest siphash24 pyopencl
-
-        python -m pytest --tb=native -rxsw -v .
+        source ./ci-support-v0
+        test_downstream  "$DOWNSTREAM_PROJECT"
