@@ -24,8 +24,9 @@ classifiers = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/matthiasdiener/constantdict/"
-"Bug Tracker" = "https://github.com/matthiasdiener/constantdict/issues"
+Homepage = "https://github.com/matthiasdiener/constantdict"
+Documentation = "https://matthiasdiener.github.io/constantdict"
+Issues = "https://github.com/matthiasdiener/constantdict/issues"
 
 [tool.ruff]
 preview = true
