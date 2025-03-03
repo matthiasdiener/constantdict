@@ -11,30 +11,63 @@ Features
      - License
      - Deterministic iteration order
      - Frozen/Immutable
+     - Mutation algorithm [#f1]_
    * - :class:`dict`
      - ✅ PSF
      - ✅
      - ❌
+     - 🟡 Single copy
    * - :class:`~constantdict.constantdict`
      - ✅ MIT
      - ✅
      - ✅
+     - 🟡 Single copy
    * - :class:`~immutabledict.immutabledict`
      - ✅ MIT
      - ✅
      - ✅
+     - ❌ Double copy
    * - `immutables.Map <https://github.com/MagicStack/immutables>`__
      - ✅ Apache 2.0
      - ❌
      - ✅
+     - ✅ Partial copy
    * - `frozendict <https://github.com/Marco-Sulla/python-frozendict>`__
      - ❌ LGPL-3.0
      - ✅
      - ✅
+     - ❌ Double copy
    * - :class:`pyrsistent.PMap`
      - ✅ MIT
      - ❌
      - ✅
+     - ✅ Partial copy
+
+
+.. [#f1] Mutation algorithms are the following:
+
+    Single copy (dict, constantdict):
+
+    .. code-block:: python
+
+          # dict:
+          new_dict = dict(old_dict)  # copy
+          new_dict[key] = value  # mutation
+
+          # constantdict:
+          new_dict = old_dict.mutate()  # copy
+          new_dict[key] = value  # mutation
+          new_dict = new_dict.finish()  # no copy
+
+    Double copy (immutabledict, frozendict):
+
+    .. code-block:: python
+
+          new_dict = dict(old_dict)  # copy
+          new_dict[key] = value  # mutation
+          new_dict = immutabledict(new_dict)  # copy
+
+    Partial copy (immutables.Map, pyrsistent.PMap): Similar to single copy, but only the changed nodes need to be updated/added.
 
 
 Performance
