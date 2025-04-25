@@ -146,7 +146,7 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
         .. note::
 
-            Based on the frozendict API.
+            Based on the `frozendict API <https://github.com/Marco-Sulla/python-frozendict?tab=readme-ov-file#setdefaultkey-default>`__.
         """
         if key in self:
             return self
