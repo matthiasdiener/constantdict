@@ -48,7 +48,7 @@ V = TypeVar("V", covariant=True)
 
 def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
     """Raise an AttributeError when trying to modify the object."""
-    raise AttributeError("object is immutable")
+    raise AttributeError(f"{self.__class__.__name__} object is immutable")
 
 
 # type-ignore-reason: covariant type incompatible with Dict
@@ -57,12 +57,12 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
     creation. This class behaves mostly like a :class:`dict`,
     but with the following differences.
 
-    Additional methods compared to :class:`dict`:
+    .. rubric:: Additional methods compared to :class:`dict`
 
     .. automethod:: __hash__
     .. automethod:: mutate
 
-    Methods that return a modified copy of the :class:`constantdict`:
+    .. rubric:: Methods that return a modified copy of a :class:`constantdict`
 
     .. automethod:: set
     .. automethod:: setdefault
@@ -70,8 +70,9 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
     .. automethod:: update
     .. automethod:: discard
 
-    Deleted methods compared to :class:`dict`
-    (these raise an :exc:`AttributeError` when called):
+    .. rubric:: Deleted methods compared to :class:`dict`
+
+    These raise an :exc:`AttributeError` when called.
 
     .. method:: __delitem__
     .. method:: __setitem__
@@ -145,7 +146,7 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
         .. note::
 
-                Based on the frozendict API.
+            Based on the frozendict API.
         """
         if key in self:
             return self
@@ -234,6 +235,17 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
             constantdict({'a': 10})
             >>> cd  # unchanged
             constantdict({'a': 1, 'b': 2})
+
+        A :class:`constantdictmutation` can also be used as a context manager:
+
+        .. doctest::
+
+            >>> with constantdict(a=1, b=2).mutate() as cd_mut:
+            ...     cd_mut["a"] = 10
+            ...     del cd_mut["b"]
+            ...     cd_new = cd_mut.finish()
+            >>> cd_new
+            constantdict({'a': 10})
         """
         # This needs to make a copy since the original dictionary must
         # not be modified.
@@ -246,22 +258,11 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 class constantdictmutation(Dict[K, V]):  # type: ignore[type-var]
     """A mutable dictionary that can be converted back to a
     :class:`constantdict` without copying. This class behaves exactly like a
-    :class:`dict`, except for the additions mentioned below.
+    :class:`dict`, except for the addition mentioned below.
 
-    Additional method compared to :class:`dict`:
+    .. rubric:: Additional method compared to :class:`dict`
 
     .. automethod:: finish
-
-    It can also be used as a context manager:
-
-    .. doctest::
-
-        >>> with constantdict(a=1, b=2).mutate() as cd_mut:
-        ...     cd_mut["a"] = 10
-        ...     del cd_mut["b"]
-        ...     cd_new = cd_mut.finish()
-        >>> cd_new
-        constantdict({'a': 10})
     """
 
     def __enter__(self) -> constantdictmutation[K, V]:
@@ -288,9 +289,8 @@ class constantdictmutation(Dict[K, V]):  # type: ignore[type-var]
 class constantdictuncachedhash(constantdict[K, V]):
     """A :class:`constantdict` that does not cache its hash
     value. This is useful when the dictionary contains items that are not
-    immutable and whose hash value might therefore change.
-
-    .. automethod:: mutate
+    immutable and whose hash value might therefore change. This class
+    behaves exactly like a :class:`constantdict` in all other respects.
     """
 
     def __hash__(self) -> int:  # type: ignore[override]
@@ -310,12 +310,7 @@ class constantdictuncachedhash(constantdict[K, V]):
 class constantdictuncachedhashmutation(constantdictmutation[K, V]):
     """A mutable dictionary that can be converted back to a
     :class:`constantdictuncachedhash` without copying. This class behaves
-    exactly like a :class:`dict`, except for one additional method mentioned
-    below.
-
-    Additional method compared to :class:`dict`:
-
-    .. automethod:: finish
+    exactly like a :class:`constantdictmutation` in all other respects.
     """
 
     def finish(self) -> constantdictuncachedhash[K, V]:
