@@ -82,7 +82,7 @@ def test_setdefault() -> None:
 
 def test_reversed() -> None:
     if sys.version_info < (3, 8):
-        pytest.skip("Python 3.7 does not support reversed() on dict objects")
+        pytest.skip("Python <3.8 does not support reversed() on dict objects")
 
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
