@@ -72,7 +72,7 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
     .. rubric:: Deleted methods compared to :class:`dict`
 
-    These raise an :exc:`AttributeError` when called.
+    These methods raise an :exc:`AttributeError` when called.
 
     .. method:: __delitem__
     .. method:: __setitem__
