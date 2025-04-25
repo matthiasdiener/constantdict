@@ -19,4 +19,4 @@ Type classes
 
 .. class:: constantdict.V
 
-    A type representing a value in a :class:`~constantdict.constantdict`.
+    A (covariant) type representing a value in a :class:`~constantdict.constantdict`.
