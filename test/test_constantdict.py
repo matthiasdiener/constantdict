@@ -129,7 +129,7 @@ def test_ior() -> None:
 
     cdd = cd
 
-    cd |= {"a": 10}  # type: ignore[has-type]
+    cd |= {"a": 10}
 
     assert cd == {"a": 10, "b": 2}
     assert cdd == {"a": 1, "b": 2}
@@ -229,14 +229,14 @@ def test_popitem() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     with pytest.raises(AttributeError):
-        cd.popitem()  # type: ignore[has-type]
+        cd.popitem()
 
 
 def test_pop() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     with pytest.raises(AttributeError):
-        cd.pop("a")  # type: ignore[has-type]
+        cd.pop("a")
 
 # }}}
 

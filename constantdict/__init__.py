@@ -123,7 +123,7 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
         # Like frozenset.__ior__, constantdict.__ior__ must return a new instance,
         # i.e., augmented assignment instead of in-place modification.
-        __ior__ = __or__  # type: ignore[assignment]
+        __ior__ = __or__
 
     def copy(self) -> dict[K, V]:
         """Return a shallow copy of this :class:`constantdict`."""
