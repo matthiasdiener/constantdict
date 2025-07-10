@@ -28,8 +28,14 @@ SOFTWARE.
 """
 
 import sys
-from collections.abc import Iterable
-from typing import Any, Dict, Hashable, TypeVar  # <3.9 needs Dict, not dict
+from collections.abc import Iterable, Mapping
+from typing import (  # <3.9 needs Dict, not dict
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Hashable,
+    TypeVar,
+)
 
 if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
@@ -38,6 +44,8 @@ else:  # pragma: no cover
     import importlib_metadata  # type: ignore[no-redef]
     from typing_extensions import Literal
 
+if TYPE_CHECKING:  # pragma: no cover
+    from _typeshed import SupportsKeysAndGetItem
 
 __version__ = importlib_metadata.version(__package__ or __name__)
 
@@ -164,7 +172,9 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
     remove = delete
 
-    def update(self, other: dict[K, V]) -> constantdict[K, V]:  # type: ignore[override]
+    def update(self,  # type: ignore[override]
+               other: Mapping[K, V] | SupportsKeysAndGetItem[K, V]
+           ) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*.
 
         .. note::
