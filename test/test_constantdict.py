@@ -136,6 +136,9 @@ def test_ior() -> None:
     cd |= [("b", 2)]  # arcane, but valid
     cd |= (("b", 2),)  # arcane, but valid
 
+    with pytest.raises(TypeError):
+        cd |= "a"  # iterable, but invalid argument to __ior__
+
     assert cd == {"a": 10, "b": 2}
     assert cdd == {"a": 1, "b": 2}
     assert isinstance(cd, constantdict)
