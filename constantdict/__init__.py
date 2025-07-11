@@ -35,7 +35,6 @@ from typing import (  # <3.9 needs Dict, not dict
     Dict,
     Hashable,
     TypeVar,
-    overload,
 )
 
 if sys.version_info >= (3, 8):
@@ -173,19 +172,11 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
     remove = delete
 
-    @overload  # type: ignore[override]
-    def update(self,
-               other: Mapping[K, V]
+    def update(self, other: Mapping[K, V]  # type: ignore[override]
                       | SupportsKeysAndGetItem[K, V]
-                      | Iterable[Iterable[K | V]]
-           ) -> constantdict[K, V]:
-        ...
-
-    @overload
-    def update(self, **kwargs: Any) -> constantdict[K, V]:
-        ...
-
-    def update(self, *args: Any, **kwargs: Any) -> constantdict[K, V]:
+                      | Iterable[tuple[K, V]]
+                      | Iterable[tuple[str, V]]
+                      | None = None, **kwargs: Any) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*.
 
         .. note::
@@ -203,8 +194,8 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
             constantdict({'a': 1, 'b': 2})
         """
         d = self.mutate()
-        if args:
-            d.update(*args)
+        if other is not None:
+            d.update(other, **kwargs)
         else:
             d.update(**kwargs)
         return d.finish()
