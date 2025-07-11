@@ -54,6 +54,10 @@ K = TypeVar("K", bound=Hashable)
 V = TypeVar("V", covariant=True)
 
 
+class _NotProvided:
+    pass
+
+
 def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
     """Raise an AttributeError when trying to modify the object."""
     raise AttributeError(f"{self.__class__.__name__} object is immutable")
@@ -176,7 +180,8 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
                       | SupportsKeysAndGetItem[K, V]
                       | Iterable[tuple[K, V]]
                       | Iterable[tuple[str, V]]
-                      | None = None, **kwargs: Any) -> constantdict[K, V]:
+                      | type[_NotProvided] = _NotProvided,
+                      **kwargs: Any) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*.
 
         .. note::
@@ -194,8 +199,10 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
             constantdict({'a': 1, 'b': 2})
         """
         d = self.mutate()
-        if other is not None:
-            d.update(other, **kwargs)
+        if other is not _NotProvided:
+            # type-ignore-reason: type semantics don't match dict exactly.
+            # see https://github.com/python/typeshed/blob/df3b5f3cdd7736079ad3124db244e4553625590c/stdlib/typing.pyi#L780-L809
+            d.update(other, **kwargs)  # type: ignore[arg-type]
         else:
             d.update(**kwargs)
         return d.finish()
