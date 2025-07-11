@@ -81,6 +81,7 @@ def test_set_delete_remove_update() -> None:
 
     assert cd2.update({("a", 2)}, a=3) == constantdict(a=3, b=2) == d2
     assert cd2.update(a=3) == constantdict(a=3, b=2) == d2
+    assert cd2.update() == {"a": 1, "b": 2}
 
     # }}}
 
