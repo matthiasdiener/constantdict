@@ -28,7 +28,7 @@ SOFTWARE.
 """
 
 import sys
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from typing import Any, Dict, Hashable, TypeVar  # <3.9 needs Dict, not dict
 
 if sys.version_info >= (3, 8):
@@ -117,13 +117,24 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
         # Python 3.9 introduced __or__ and __ior__ for dict
         def __or__(self, other: object) -> constantdict[K, V]:  # type: ignore[override]
             """Return the union of this :class:`constantdict` and *other*."""
-            if not isinstance(other, (dict, self.__class__)):
+            if not isinstance(other, (Mapping)):
                 return NotImplemented
-            return self.update(other)
+            d = self.mutate()
+            d.update(other)
+            return d.finish()
 
         # Like frozenset.__ior__, constantdict.__ior__ must return a new instance,
         # i.e., augmented assignment instead of in-place modification.
-        __ior__ = __or__
+        def __ior__(self, other: object) -> constantdict[K, V]:  # type: ignore[override]
+            """Return the union of this :class:`constantdict` and *other*."""
+            # Note that the only difference to __or__ is that this method accepts
+            # different types of *other*.
+            if (not isinstance(other, (Mapping, Iterable))
+                or isinstance(other, (str, bytes, bytearray, range))):
+                return NotImplemented
+            d = self.mutate()
+            d.update(other)
+            return d.finish()
 
     def copy(self) -> dict[K, V]:
         """Return a shallow copy of this :class:`constantdict`."""

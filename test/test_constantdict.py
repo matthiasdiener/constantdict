@@ -119,6 +119,9 @@ def test_or() -> None:
     with pytest.raises(TypeError):
         cd | None
 
+    with pytest.raises(TypeError):
+        cd | [("a", 10)]  # does not work, in contrast to |=
+
 
 def test_ior() -> None:
     if not sys.version_info >= (3, 9):
@@ -130,6 +133,8 @@ def test_ior() -> None:
     cdd = cd
 
     cd |= {"a": 10}
+    cd |= [("b", 2)]  # arcane, but valid
+    cd |= (("b", 2),)  # arcane, but valid
 
     assert cd == {"a": 10, "b": 2}
     assert cdd == {"a": 1, "b": 2}
