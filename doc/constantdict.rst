@@ -20,3 +20,12 @@ Type classes
 .. class:: constantdict.V
 
     A (covariant) type representing a value in a :class:`~constantdict.constantdict`.
+
+References
+^^^^^^^^^^
+
+(This is mainly here because the documentation tool is confused.)
+
+.. class:: SupportsKeysAndGetItem
+
+    As the name suggests.

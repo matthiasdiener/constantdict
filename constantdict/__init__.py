@@ -28,8 +28,14 @@ SOFTWARE.
 """
 
 import sys
-from collections.abc import Iterable
-from typing import Any, Dict, Hashable, TypeVar  # <3.9 needs Dict, not dict
+from collections.abc import Iterable, Mapping
+from typing import (  # <3.9 needs Dict, not dict
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Hashable,
+    TypeVar,
+)
 
 if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
@@ -38,12 +44,18 @@ else:  # pragma: no cover
     import importlib_metadata  # type: ignore[no-redef]
     from typing_extensions import Literal
 
+if TYPE_CHECKING:  # pragma: no cover
+    from _typeshed import SupportsKeysAndGetItem
 
 __version__ = importlib_metadata.version(__package__ or __name__)
 
 
 K = TypeVar("K", bound=Hashable)
 V = TypeVar("V", covariant=True)
+
+
+class _NotProvided:
+    pass
 
 
 def _del_attr(self: Any, *args: Any, **kwargs: Any) -> None:
@@ -164,7 +176,10 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
     remove = delete
 
-    def update(self, other: dict[K, V]) -> constantdict[K, V]:  # type: ignore[override]
+    def update(self, other: Mapping[K, V]  # type: ignore[override]
+                      | SupportsKeysAndGetItem[K, V]
+                      | type[_NotProvided] = _NotProvided,
+                      **kwargs: Any) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*.
 
         .. note::
@@ -178,11 +193,16 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
             >>> cd_new = cd.update({"a": 10, "c": 3})
             >>> cd_new
             constantdict({'a': 10, 'b': 2, 'c': 3})
-            >>> cd
+            >>> cd  # unchanged
             constantdict({'a': 1, 'b': 2})
         """
         d = self.mutate()
-        d.update(other)
+        if other is not _NotProvided:
+            # type-ignore-reason: type semantics don't match dict exactly.
+            # see https://github.com/python/typeshed/blob/df3b5f3cdd7736079ad3124db244e4553625590c/stdlib/typing.pyi#L780-L809
+            d.update(other, **kwargs)  # type: ignore[arg-type]
+        else:
+            d.update(**kwargs)
         return d.finish()
 
     def discard(self, key: K) -> constantdict[K, V]:
