@@ -178,8 +178,6 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
     def update(self, other: Mapping[K, V]  # type: ignore[override]
                       | SupportsKeysAndGetItem[K, V]
-                      | Iterable[tuple[K, V]]
-                      | Iterable[tuple[str, V]]
                       | type[_NotProvided] = _NotProvided,
                       **kwargs: Any) -> constantdict[K, V]:
         """Return a new :class:`constantdict` with updated items from *other*.
@@ -195,7 +193,7 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
             >>> cd_new = cd.update({"a": 10, "c": 3})
             >>> cd_new
             constantdict({'a': 10, 'b': 2, 'c': 3})
-            >>> cd
+            >>> cd  # unchanged
             constantdict({'a': 1, 'b': 2})
         """
         d = self.mutate()
