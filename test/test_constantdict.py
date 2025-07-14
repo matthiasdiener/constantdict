@@ -129,16 +129,17 @@ def test_or() -> None:
     assert cd | cd == cd
 
     with pytest.raises(TypeError):
-        cd | "a"
+        cd | "a"  # type: ignore[operator]
 
     with pytest.raises(TypeError):
-        cd | 1
+        cd | 1  # type: ignore[operator]
 
     with pytest.raises(TypeError):
-        cd | None
+        cd | None  # type: ignore[operator]
 
     with pytest.raises(TypeError):
-        cd | [("a", 10)]  # does not work, in contrast to |=
+        # does not work, in contrast to |=
+        cd | [("a", 10)]  # type: ignore[operator]
 
 
 def test_ior() -> None:
@@ -150,12 +151,17 @@ def test_ior() -> None:
 
     cdd = cd
 
+    # cd gets 'modified' through augmented assignment
     cd |= {"a": 10}
-    cd |= [("b", 2)]  # arcane, but valid
-    cd |= (("b", 2),)  # arcane, but valid
+    cd |= [("b", 20)]   # arcane, but valid
+    cd |= (("b", 20),)  # arcane, but valid
+    cd |= {("b", 2)}    # arcane, but valid
 
-    with pytest.raises(TypeError):
-        cd |= "a"  # iterable, but invalid argument to __ior__
+    assert cd == {"a": 10, "b": 2}
+
+    with pytest.raises(ValueError):
+        # iterable, but invalid argument to __ior__
+        cd |= "a"  # type: ignore[arg-type]
 
     assert cd == {"a": 10, "b": 2}
     assert cdd == {"a": 1, "b": 2}

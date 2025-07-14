@@ -127,23 +127,20 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
 
     if sys.version_info >= (3, 9):
         # Python 3.9 introduced __or__ and __ior__ for dict
-        def __or__(self, other: object) -> constantdict[K, V]:  # type: ignore[override]
+        def __or__(self, other: Mapping[K, V]) -> constantdict[K, V]:  # type: ignore[override]
             """Return the union of this :class:`constantdict` and *other*."""
-            if not isinstance(other, (Mapping)):
-                return NotImplemented
-            d = self.mutate()
-            d.update(other)
-            return d.finish()
+            if not isinstance(other, Mapping):
+                raise TypeError("unsupported operand type(s) for |: "
+                                f"'{type(self).__name__}' and '{type(other).__name__}'")
+            return self.__ior__(other)
 
         # Like frozenset.__ior__, constantdict.__ior__ must return a new instance,
         # i.e., augmented assignment instead of in-place modification.
-        def __ior__(self, other: object) -> constantdict[K, V]:  # type: ignore[override]
+        def __ior__(self,  # type: ignore[override]
+                    other: Mapping[K, V] | Iterable[tuple[K, V]]) -> constantdict[K, V]:
             """Return the union of this :class:`constantdict` and *other*."""
             # Note that the only difference to __or__ is that this method accepts
             # different types of *other*.
-            if (not isinstance(other, (Mapping, Iterable))
-                or isinstance(other, (str, bytes, bytearray, range))):
-                return NotImplemented
             d = self.mutate()
             d.update(other)
             return d.finish()
