@@ -210,7 +210,7 @@ class constantdict(Dict[K, V]):  # type: ignore[type-var]
             # see https://github.com/python/typeshed/blob/df3b5f3cdd7736079ad3124db244e4553625590c/stdlib/typing.pyi#L780-L809
             d.update(other, **kwargs)  # type: ignore[arg-type]
         else:
-            d.update(**kwargs)
+            d.update(**kwargs)  # type: ignore[call-overload]
         return d.finish()
 
     def discard(self, key: K) -> constantdict[K, V]:
