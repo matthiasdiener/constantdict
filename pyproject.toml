@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "constantdict"
-version = "2025.2"
+version = "2025.3"
 authors = [
   { name="Matthias Diener", email="matthias.diener@gmail.com" },
 ]
