@@ -29,3 +29,8 @@ References
 .. class:: SupportsKeysAndGetItem
 
     As the name suggests.
+
+.. class:: constantdict._NotProvided
+
+    Private sentinel that marks an omitted ``other`` argument to
+    :meth:`~constantdict.constantdict.update`.

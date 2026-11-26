@@ -21,6 +21,9 @@ author = "Constantdict contributors"
 version = __version__
 release = __version__
 
+# Render the update() default as _NotProvided so Sphinx can parse its signature.
+autodoc_preserve_defaults = True
+
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "pyrsistent": ("https://pyrsistent.readthedocs.io/en/latest/", None),
