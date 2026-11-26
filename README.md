@@ -49,11 +49,31 @@ assert cd_new2 == {42: 0}
 Please also see the [documentation](https://matthiasdiener.github.io/constantdict),
 as well as the examples in the `examples/` directory.
 
+### Python 3.15 and built-in `frozendict`
+
+Python 3.15 introduces a built-in immutable mapping. A `constantdict` or
+`constantdictuncachedhash` compares equal to a built-in `frozendict` with the
+same items, regardless of insertion order. When hashable, the two mappings
+have the same hash and can be used interchangeably as dictionary keys.
+See [PEP 814](https://peps.python.org/pep-0814/).
+
+```python
+from constantdict import constantdict
+
+cd = constantdict(a=1, b=2)
+fd = frozendict(b=2, a=1)
+
+assert cd == fd
+assert hash(cd) == hash(fd)
+assert {cd: "cached result"}[fd] == "cached result"
+```
+
 
 ## References
 
-### Other packages
+### Other implementations
 
+- [Built-in `frozendict` in Python 3.15](https://docs.python.org/3.15/builtins/stdtypes.html#frozendict)
 - [immutabledict](https://github.com/corenting/immutabledict)
 - [immutables](https://github.com/MagicStack/immutables)
 - [pyrsistent](https://github.com/tobgu/pyrsistent)
@@ -65,6 +85,7 @@ as well as the examples in the `examples/` directory.
 
 - [PEP 416](https://www.python.org/dev/peps/pep-0416/)
 - [PEP 603](https://www.python.org/dev/peps/pep-0603/)
+- [PEP 814 – Add `frozendict` built-in type](https://peps.python.org/pep-0814/)
 
 ### Discussions
 
