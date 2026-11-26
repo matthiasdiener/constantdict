@@ -7,7 +7,7 @@ _conf_url = \
 with urlopen(_conf_url) as _inf:
     exec(compile(_inf.read(), _conf_url, "exec"), globals())
 
-old_linkcode_resolve = linkcode_resolve  # noqa: F821 (linkcode_resolve comes from the URL above)
+old_linkcode_resolve = globals()["linkcode_resolve"]
 
 
 def linkcode_resolve(*args, **kwargs):

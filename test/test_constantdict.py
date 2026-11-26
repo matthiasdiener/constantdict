@@ -40,9 +40,9 @@ def test_set_delete_remove_update() -> None:
     cd: constantdict[str, int] = constantdict(a=1, b=2)
 
     assert (cd.set("a", 10) == constantdict(a=10, b=2)
-            == dict(a=10, b=2))  # noqa: C408
+            == dict(a=10, b=2))  # ruff: ignore[unnecessary-collection-call]
     assert (cd.remove("a") == cd.delete("a")
-            == constantdict(b=2) == dict(b=2))  # noqa: C408
+            == constantdict(b=2) == dict(b=2))  # ruff: ignore[unnecessary-collection-call]
 
     assert isinstance(cd.set("a", 10), constantdict)
     assert isinstance(cd.delete("a"), constantdict)

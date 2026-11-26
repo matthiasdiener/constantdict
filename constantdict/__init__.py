@@ -29,6 +29,7 @@ SOFTWARE.
 
 import sys
 from collections.abc import Iterable, Mapping
+from types import TracebackType
 from typing import (  # <3.9 needs Dict, not dict
     TYPE_CHECKING,
     Any,
@@ -51,7 +52,7 @@ __version__ = importlib_metadata.version(__package__ or __name__)
 
 
 K = TypeVar("K", bound=Hashable)
-V = TypeVar("V", covariant=True)
+V = TypeVar("V", covariant=True)  # ruff: ignore[type-name-incorrect-variance]
 
 
 class _NotProvided:
@@ -296,7 +297,12 @@ class constantdictmutation(Dict[K, V]):  # type: ignore[type-var]
     def __enter__(self) -> constantdictmutation[K, V]:
         return self
 
-    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> Literal[False]:
+    def __exit__(
+            self,
+            exc_type: type[BaseException] | None,
+            exc_value: BaseException | None,
+            traceback: TracebackType | None,
+    ) -> Literal[False]:
         return False
 
     def finish(self) -> constantdict[K, V]:
