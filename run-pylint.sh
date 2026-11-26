@@ -14,7 +14,8 @@ if [[ ! -f .run-pylint.py ]]; then
 fi
 
 
-PYLINT_RUNNER_ARGS="--jobs=4 --yaml-rcfile=.pylintrc.yml"
+# Parallel workers use dill, which relies on co_lnotab removed in Python 3.15.
+PYLINT_RUNNER_ARGS="--jobs=1 --yaml-rcfile=.pylintrc.yml"
 
 if [[ -f .pylintrc-local.yml ]]; then
     PYLINT_RUNNER_ARGS+=" --yaml-rcfile=.pylintrc-local.yml"

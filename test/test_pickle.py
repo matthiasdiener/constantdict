@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __copyright__ = """
 Copyright (C) 2024 University of Illinois Board of Trustees
 """
@@ -26,7 +28,7 @@ SOFTWARE.
 import os
 import sys
 from pickle import HIGHEST_PROTOCOL
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable
 
 import pytest
 
@@ -37,7 +39,7 @@ from constantdict import constantdict
 
 def run_test_with_new_python_invocation(f: Callable[..., Any], *args: Any,
                                         extra_env_vars:
-                                        Optional[Dict[str, Any]] = None) -> None:
+                                        dict[str, Any] | None = None) -> None:
     if extra_env_vars is None:
         extra_env_vars = {}
 

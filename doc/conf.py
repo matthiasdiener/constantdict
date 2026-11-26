@@ -7,7 +7,7 @@ _conf_url = \
 with urlopen(_conf_url) as _inf:
     exec(compile(_inf.read(), _conf_url, "exec"), globals())
 
-old_linkcode_resolve = linkcode_resolve  # noqa: F821 (linkcode_resolve comes from the URL above)
+old_linkcode_resolve = globals()["linkcode_resolve"]
 
 
 def linkcode_resolve(*args, **kwargs):
@@ -20,6 +20,9 @@ copyright = "2024, University of Illinois Board of Trustees"
 author = "Constantdict contributors"
 version = __version__
 release = __version__
+
+# Render the update() default as _NotProvided so Sphinx can parse its signature.
+autodoc_preserve_defaults = True
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),

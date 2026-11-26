@@ -48,8 +48,12 @@ extend-select = [
 ]
 
 extend-ignore = [
-  "N801",  # Class name should use CapWords convention
+  "invalid-class-name",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# Keep the public classes in their original module for pickle compatibility.
+"constantdict/__init__.py" = ["non-empty-init-module"]
 
 [tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
