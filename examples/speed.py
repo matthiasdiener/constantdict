@@ -1,79 +1,78 @@
-# Simple speed test for various immutable dict implementations
+"""Benchmark read, construction, and hashing operations on several mappings."""
 
-from timeit import timeit
-from typing import Mapping
+from __future__ import annotations
 
-from frozendict import frozendict
+import builtins
+import json
+from collections.abc import Callable
+from statistics import median
+from timeit import Timer
+from typing import Any
+
+from frozendict import frozendict as pypi_frozendict
 from immutabledict import immutabledict
 from immutables import Map
 from pyrsistent import pmap
 
 from constantdict import constantdict
 
-for N in (1, 1000):
-    print(f"\n============= {N} items")
-    for dict_impl in (dict, constantdict, immutabledict, Map, frozendict, pmap):
 
-        # {{{ setup
+def implementations() -> dict[str, Callable[[dict[str, int]], Any]]:
+    factories = {
+        "dict": dict,
+        "constantdict": constantdict,
+        "Built-in frozendict": getattr(builtins, "frozendict", None),
+        "immutabledict": immutabledict,
+        "immutables.Map": Map,
+        "PyPI frozendict": pypi_frozendict,
+        "pyrsistent.PMap": pmap,
+    }
+    return {
+        label: factory for label, factory in factories.items() if factory is not None
+    }
 
-        basedict = {str(i): i for i in range(N)}
-        len_dict = len(basedict)
 
-        # }}}
+def time_operation(statement: str, scope: dict[str, Any], executions: int) -> float:
+    """Return the median time per execution in microseconds."""
+    samples = Timer(statement, globals=scope).repeat(repeat=5, number=executions)
+    return median(samples) * 1_000_000 / executions
 
-        name = dict_impl.__name__
 
-        print(name)
+def benchmark() -> dict[int, dict[str, dict[str, float | None]]]:
+    results: dict[int, dict[str, dict[str, float | None]]] = {}
+    for size in (1, 1_000):
+        source = {str(i): i for i in range(size)}
+        keys = range(size)
+        results[size] = {}
 
-        # {{{ Creation
+        for label, factory in implementations().items():
+            mapping = factory(source)
+            operations = {
+                "Build from dict": "factory(source)",
+                "Look up a key": "mapping['0']",
+                "List keys": "list(mapping.keys())",
+                "fromkeys": (
+                    "factory.fromkeys(keys)" if hasattr(factory, "fromkeys") else None
+                ),
+                "Build + first hash": (
+                    "hash(factory(source))" if label != "dict" else None
+                ),
+                "Warm hash": "hash(mapping)" if label != "dict" else None,
+            }
+            if operations["Warm hash"] is not None:
+                hash(mapping)
 
-        print("  init\t\t", timeit(f"{name}({basedict})",
-                                    number=10000, globals=globals()))
+            scope = {
+                "factory": factory, "source": source, "mapping": mapping, "keys": keys
+            }
+            results[size][label] = {
+                name: time_operation(statement, scope, executions=10_000)
+                    if statement is not None else None
+                for name, statement in operations.items()
+            }
 
-        if name not in ("Map", "pmap"):
-            print("  fromkeys\t", timeit(f"{name}.fromkeys(range(len_dict))",
-                                        number=10000, globals=globals()))
-        else:
-            print("  fromkeys\t n/a")
+    return results
 
-        # }}}
 
-        # {{{ Immutable operations
-
-        if name != "dict":
-            print("  hash\t\t", timeit(f"hash({name}({basedict}))",
-                                    number=10000, globals=globals()))
-        else:
-            print("  hash\t\t n/a")
-
-        if name != "dict":
-            print("  hash2\t\t", timeit("for i in range(1000): hash(x)",
-                                        setup=f"x={name}({basedict})",
-                                        number=10000, globals=globals()))
-        else:
-            print("  hash2\t\t n/a")
-
-        print("  elem_access\t", timeit(f"{name}({basedict})['0']",
-                                        number=10000, globals=globals()))
-
-        print("  list(keys)\t", timeit(f"list({name}({basedict}).keys())",
-                                    number=10000, globals=globals()))
-
-        # }}}
-
-        # {{{ Mutation
-
-        d: Mapping[str, int] = dict_impl(basedict)
-
-        if name == "dict":
-            mut_code = "d2 = d.copy(); d2[1] = 1"
-        else:
-            mut_code = "d2 = d.set(1, 1)"
-
-        try:
-            print("  copy+mutate\t", timeit(f"{mut_code}", number=10000,
-                                            globals=globals()))
-        except AttributeError:
-            print("  copy+mutate\t n/a")
-
-        # }}}
+if __name__ == "__main__":
+    print(json.dumps(benchmark(), indent=2))
