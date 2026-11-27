@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: ["pypy3.10", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14-dev", "3.15"]
+        python-version: ["pypy3.10", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15", "3.16-dev"]
       fail-fast: false
 
     name: pytest (${{ matrix.python-version }})${{ matrix.python-version == '3.13' && ' w/ coverage' || '' }}
@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14-dev"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15", "3.16-dev"]
       fail-fast: false
 
     steps:
